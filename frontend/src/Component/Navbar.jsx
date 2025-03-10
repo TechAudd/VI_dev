@@ -29,13 +29,12 @@ function Navbar() {
                   loop
                   className="size-16"
                 /> */}
-                <img
+                {/* <img
                   src="../../public/logo.webp"
                   className="object-contain w-40"
-                />
-                <p className="text-lg font-inter font-semibold block sm:hidden">
-                  CRM
-                </p>
+                /> */}
+                <p className=" mb-2 text-xl font-bold ">Mahindra University</p>
+
               </Link>
               <div className="md:space-x-6 justify-center items-center ml-auto  space-x-3 flex ">
                 <FullScreenButton />

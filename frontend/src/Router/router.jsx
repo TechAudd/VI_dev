@@ -4,8 +4,8 @@ import Home from "../Component/Home";
 import CheckAuth from "../Component/CheckAuth";
 import Login from "../Component/login/Login";
 import Register from "../Component/login/Register";
-import CreateForm from "../Component/form/CreateForm";
 import Layout from "../Layout/Layout"
+import Form from "../Component/form/Form";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/createForm",
-        element: <CreateForm />
+        element: <Form />
       }
     ],
   },
