@@ -4,7 +4,7 @@ import axios from "axios";
 import { FiSearch } from "react-icons/fi";
 import CreateForm from "./CreateForm";
 import AllForm from "./AllForm";
-import { debounce } from "lodash"; 
+import { debounce } from "lodash";
 
 export default function Form() {
     const [allBranchData, setAllBranchData] = useState([]);
@@ -33,7 +33,7 @@ export default function Form() {
                     <div className="relative w-full max-w-xs mx-4">
                         <input
                             type="text"
-                            placeholder="Search by Branch name"
+                            placeholder="Search Form"
                             className="p-2 pl-10 border border-gray-500 rounded w-full"
                         />
                         <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">

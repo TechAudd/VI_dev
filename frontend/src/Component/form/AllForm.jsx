@@ -1,22 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { IoMdArrowDropdown } from "react-icons/io";
-import { FiSearch } from "react-icons/fi";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
-export default function AllForm(
-    {
-        allBranchData,
-        totalPages,
-        page,
-        setPage,
-        setAllBranchData,
-    }
-) {
-    const [branchUpdateData, setBranchUpdateData] = useState({});
+export default function AllForm() {
     const [showModal, setShowModal] = useState(false);
-    const [branchId, setBranchId] = useState(null);
+    const [formData, setFormData] = useState([]);
+
+    // Fetch data from API on component mount
+    useEffect(() => {
+        const fetchForms = async () => {
+            try {
+                const response = await axios.get("http://localhost:4100/api/form/getAllForms");
+                setFormData(response.data);
+            } catch (error) {
+                console.error("Error fetching forms", error);
+                toast.error("Failed to load forms");
+            }
+        };
+
+        fetchForms();
+    }, []);
     return (
         <>
             <div className="border-gray-300 w-full">
@@ -27,15 +31,40 @@ export default function AllForm(
                             <thead className="bg-blue-200 text-gray-800 text-xs sm:text-xs md:text-sm">
                                 <tr>
                                     <th className="p-3 border border-gray-300">SR NO</th>
-                                    <th className="p-3 border border-gray-300">Name</th>
-                                    <th className="p-3 border border-gray-300">Address</th>
-                                    <th className="p-3 border border-gray-300">GSTIN</th>
-                                    <th className="p-2 border  text-center border-gray-300">
-                                        Enable/Disable
-                                    </th>
-                                    <th className="p-3 border border-gray-300">Action</th>
+                                    <th className="p-3 border border-gray-300">General Information</th>
+                                    <th className="p-3 border border-gray-300">Structural System</th>
+                                    <th className="p-3 border border-gray-300">Leaning</th>
+                                    <th className="p-3 border border-gray-300">Cracking</th>
+                                    <th className="p-3 border border-gray-300">Settlement</th>
+                                    <th className="p-3 border border-gray-300">Actions</th>
                                 </tr>
                             </thead>
+                            <tbody>
+                                {formData.length > 0 ? (
+                                    formData.map((form, index) => (
+                                        <tr key={form.id} className="text-center border border-gray-300">
+                                            <td className="p-3 border border-gray-300">{index + 1}</td>
+                                            <td className="p-3 border border-gray-300">{form.part1GeneralInformation?.join(", ") || "N/A"}</td>
+                                            <td className="p-3 border border-gray-300">{form.part2StructuralSystem?.join(", ") || "N/A"}</td>
+                                            <td className="p-3 border border-gray-300">{form.leaningOfBuilding ? "Yes" : "No"}</td>
+                                            <td className="p-3 border border-gray-300">{form.defect_cracking || "N/A"}</td>
+                                            <td className="p-3 border border-gray-300">{form.defect_settlement || "N/A"}</td>
+                                            <td className="p-3 border border-gray-300 flex justify-center gap-2">
+                                                {/* <button className="text-blue-500">
+                                                    <AiFillEdit size={20} />
+                                                </button> */}
+                                                <button className="text-red-500">
+                                                    <AiFillDelete size={20} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="7" className="p-3 text-center">No forms available</td>
+                                    </tr>
+                                )}
+                            </tbody>
                         </table>
                     </div>
                 </div>

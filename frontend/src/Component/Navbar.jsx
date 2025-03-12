@@ -33,7 +33,7 @@ function Navbar() {
                   src="../../public/logo.webp"
                   className="object-contain w-40"
                 /> */}
-                <p className=" mb-2 text-xl font-bold ">Mahindra University</p>
+                <p className=" mb-2 text-xl font-bold ">Visual Inspection</p>
 
               </Link>
               <div className="md:space-x-6 justify-center items-center ml-auto  space-x-3 flex ">
