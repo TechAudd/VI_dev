@@ -28,16 +28,26 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
   const [formData, setFormData] = useState({
     leaningOfBuilding: null,
     settlements: { floor: null, wall: null, foundation: null },
-    defects: {
-      Cracking: null,
-      Settlement: null,
-      'Thermal Cracking': null,
-      Structural: null,
-      Crazing: null,
-      Honeycombing: null,
-      'Cracking in load-bearing walls/ Infill walls': null,
-      'Cracking in RCC components': null,
-    },
+    defect_cracking: "",
+    defect_settlement: "",
+    defect_thermalCracking: "",
+    defect_structural: "",
+    defect_crazing: "",
+    defect_honeycombing: "",
+    defect_wallCracks: "",
+    defect_rccCracks: "",
+    defect_waterSeepage: "",
+    defect_popOuts: "",
+    defect_spalling: "",
+    defect_rustStaining: "",
+    defect_corrosionLongitudinalBars: "",
+    defect_corrosionLateralTies: "",
+    defect_debondingDueToCorrosion: "",
+    defect_deflectionBeamsSlabsFloors: "",
+    defect_delaminationDebonding: "",
+    defect_crackingOthers: "",
+    overallCondition: "",
+    recommendations: "",
   });
 
   const handlePart1Change = (index, value) => {
@@ -81,10 +91,45 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const payload = {
       part1GeneralInformation: part1Data,
       part2StructuralSystem: part2Data,
-      part3SurveySigns: formData,
+
+      // flattening data here
+      leaningOfBuilding: formData.leaningOfBuilding,
+      settlement_floor: formData.settlements.floor,
+      settlement_wall: formData.settlements.wall,
+      settlement_foundation: formData.settlements.foundation,
+
+      defect_cracking: formData?.defect_cracking,
+      defect_settlement: formData?.defect_settlement,
+      defect_thermalCracking: formData?.defect_thermalCracking,
+      defect_structural: formData?.defect_structural,
+      defect_crazing: formData?.defect_crazing,
+      defect_honeycombing: formData?.defect_honeycombing,
+      defect_wallCracks: formData?.defect_wallCracks,
+      defect_rccCracks: formData?.defect_rccCracks,
+      defect_thermalCracking: formData?.defect_thermalCracking,
+      defect_waterSeepage: formData?.defect_waterSeepage,
+      defect_popOuts: formData?.defect_popOuts,
+      defect_spalling: formData?.defect_spalling,
+      defect_rustStaining: formData?.defect_rustStaining,
+      defect_corrosionLongitudinalBars: formData?.defect_corrosionLongitudinalBars,
+      defect_corrosionLateralTies: formData?.defect_corrosionLateralTies,
+      defect_debondingDueToCorrosion: formData?.defect_debondingDueToCorrosion,
+      defect_deflectionBeamsSlabsFloors: formData?.defect_deflectionBeamsSlabsFloors,
+      defect_delaminationDebonding: formData?.defect_delaminationDebonding,
+      defect_crackingOthers: formData?.defect_crackingOthers,
+
+      overallCondition: formData?.overallCondition,
+
+      // Add other defect and recommendation fields as needed
+      recommendation_noActionRequired: formData.recommendation_noActionRequired || null,
+      recommendation_repairStrengthening: formData.recommendation_repairStrengthening || null,
+      recommendation_detailedAssessmentRequired: formData.recommendation_detailedAssessmentRequired || null,
+      recommendation_reconstruction: formData.recommendation_reconstruction || null,
+      recommendation_barricadeNonUse: formData.recommendation_barricadeNonUse || null,
     };
 
     try {
@@ -99,8 +144,6 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
       alert("Form submission failed.");
     }
   };
-
-  const severityLevels = ['None', 'Insignificant', 'Slight', 'Moderate', 'Severe', 'Very Severe'];
 
   return (
     <div className="w-full">
@@ -219,16 +262,25 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                       </tr>
                     </thead>
                     <tbody>
+                      {/* Basic Defects */}
                       {[
-                        "Cracking", "Settlement", "Thermal cracking", "Structural",
-                        "Crazing", "Honeycombing", "Cracking in load-bearing walls/ Infill walls", "Cracking in RCC components"
-                      ].map((defect) => (
-                        <tr key={defect}>
-                          <td className="border p-2">{defect}</td>
+                        { key: "defect_cracking", label: "Cracking" },
+                        { key: "defect_settlement", label: "Settlement" },
+                        { key: "defect_thermalCracking", label: "Thermal cracking" },
+                        { key: "defect_structural", label: "Structural" },
+                        { key: "defect_crazing", label: "Crazing" },
+                        { key: "defect_honeycombing", label: "Honeycombing" },
+                        { key: "defect_wallCracks", label: "Cracking in load-bearing walls/ Infill walls" },
+                        { key: "defect_rccCracks", label: "Cracking in RCC components" },
+                      ].map((item) => (
+                        <tr key={item.key}>
+                          <td className="border p-2">{item.label}</td>
                           <td className="border p-2">
                             <select
-                              value={formData.defects[defect] || ""}
-                              onChange={(e) => handleDefectChange(defect, e.target.value)}
+                              value={formData[item.key] || ""}
+                              onChange={(e) =>
+                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
+                              }
                               className="w-full border rounded p-1"
                             >
                               <option value="">Select severity</option>
@@ -240,49 +292,96 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                         </tr>
                       ))}
 
+                      {/* Water Seepage Section */}
+                      <tr>
+                        <td colSpan={2} className="border p-2 font-semibold text-gray-700 bg-gray-50">
+                          (Attach separate sheets for crack details, if required)
+                        </td>
+                      </tr>
                       {[
-                        {
-                          title: "(Attach separate sheets for crack details, if required)",
-                          items: ['Water seepage', 'Pop-outs', 'Spalling', 'Rust staining']
-                        },
-                        {
-                          title: "(Extent of corrosion)",
-                          items: [
-                            "(a) Corrosion in longitudinal bars",
-                            "(b) Corrosion in lateral ties/rings",
-                            "(c) Debonding of surface due to corrosion",
-                            "(d) Deflection in beams/slabs/floors (Attach separate sheets for details preferably with photographs) "
-                          ]
-                        },
-                        {
-                          title: "State of the existing repairs (if any carried out in structure)",
-                          items: ["(a) Delamination/debonding", "(b) Cracking Others (specify)"]
-                        }
-                      ].map((section, i) => (
-                        <React.Fragment key={i}>
-                          <tr>
-                            <td colSpan={2} className="border p-2 font-semibold text-gray-700 bg-gray-50">
-                              {section.title}
-                            </td>
-                          </tr>
-                          {section.items.map((item, idx) => (
-                            <tr key={idx}>
-                              <td className="border p-2">{item}</td>
-                              <td className="border p-2">
-                                <select
-                                  value={formData.defects[item] || ""}
-                                  onChange={(e) => handleDefectChange(item, e.target.value)}
-                                  className="w-full border rounded p-1"
-                                >
-                                  <option value="">Select severity</option>
-                                  {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                    <option key={level} value={level}>{level}</option>
-                                  ))}
-                                </select>
-                              </td>
-                            </tr>
-                          ))}
-                        </React.Fragment>
+                        { key: "defect_waterSeepage", label: "Water seepage" },
+                        { key: "defect_popOuts", label: "Pop-outs" },
+                        { key: "defect_spalling", label: "Spalling" },
+                        { key: "defect_rustStaining", label: "Rust staining" },
+                      ].map((item) => (
+                        <tr key={item.key}>
+                          <td className="border p-2">{item.label}</td>
+                          <td className="border p-2">
+                            <select
+                              value={formData[item.key] || ""}
+                              onChange={(e) =>
+                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
+                              }
+                              className="w-full border rounded p-1"
+                            >
+                              <option value="">Select severity</option>
+                              {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
+                                <option key={level} value={level}>{level}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+
+                      {/* Extent of Corrosion Section */}
+                      <tr>
+                        <td colSpan={2} className="border p-2 font-semibold text-gray-700 bg-gray-50">
+                          (Extent of corrosion)
+                        </td>
+                      </tr>
+                      {[
+                        { key: "defect_corrosionLongitudinalBars", label: "(a) Corrosion in longitudinal bars" },
+                        { key: "defect_corrosionLateralTies", label: "(b) Corrosion in lateral ties/rings" },
+                        { key: "defect_debondingDueToCorrosion", label: "(c) Debonding of surface due to corrosion" },
+                        { key: "defect_deflectionBeamsSlabsFloors", label: "(d) Deflection in beams/slabs/floors (Attach separate sheets for details preferably with photographs)" },
+                      ].map((item) => (
+                        <tr key={item.key}>
+                          <td className="border p-2">{item.label}</td>
+                          <td className="border p-2">
+                            <select
+                              value={formData[item.key] || ""}
+                              name={item.key}
+                              onChange={(e) =>
+                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
+                              }
+                              className="w-full border rounded p-1"
+                            >
+                              <option value="">Select severity</option>
+                              {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
+                                <option key={level} value={level}>{level}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+
+                      {/* State of Existing Repairs Section */}
+                      <tr>
+                        <td colSpan={2} className="border p-2 font-semibold text-gray-700 bg-gray-50">
+                          State of the existing repairs (if any carried out in structure)
+                        </td>
+                      </tr>
+                      {[
+                        { key: "defect_delaminationDebonding", label: "(a) Delamination/debonding" },
+                        { key: "defect_crackingOthers", label: "(b) Cracking Others (specify)" },
+                      ].map((item) => (
+                        <tr key={item.key}>
+                          <td className="border p-2">{item.label}</td>
+                          <td className="border p-2">
+                            <select
+                              value={formData[item.key] || ""}
+                              onChange={(e) =>
+                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
+                              }
+                              className="w-full border rounded p-1"
+                            >
+                              <option value="">Select severity</option>
+                              {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
+                                <option key={level} value={level}>{level}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
                       ))}
                     </tbody>
                   </table>
@@ -333,29 +432,23 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                     </thead>
                     <tbody>
                       {[
-                        "No further action required",
-                        "Repair/strengthening works necessary",
-                        "Detailed assessment required",
-                        "Barricade/non-use of unsafe areas",
-                        "Reconstruction or any other reasons"
-                      ].map((rec, index) => (
+                        { key: "recommendation_noActionRequired", label: "No further action required" },
+                        { key: "recommendation_repairStrengthening", label: "Repair/strengthening works necessary" },
+                        { key: "recommendation_detailedAssessmentRequired", label: "Detailed assessment required" },
+                        { key: "recommendation_barricadeNonUse", label: "Barricade/non-use of unsafe areas" },
+                        { key: "recommendation_reconstruction", label: "Reconstruction or any other reasons" },
+                      ].map((item, index) => (
                         <tr key={index}>
-                          <td className="border p-2">{rec}</td>
+                          <td className="border p-2">{item.label}</td>
                           <td className="border p-2">
                             <input
                               type="text"
                               className="w-full border rounded p-1"
-                              value={formData.recommendations?.[rec]?.remarks || ""}
+                              value={formData[item.key] || ""}
                               onChange={(e) =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  recommendations: {
-                                    ...prev.recommendations,
-                                    [rec]: {
-                                      ...prev.recommendations?.[rec],
-                                      remarks: e.target.value
-                                    }
-                                  }
+                                  [item.key]: e.target.value,
                                 }))
                               }
                               placeholder="Enter remarks (optional)"
@@ -369,7 +462,6 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
               </div>
             </div>
           )}
-
 
           {/* Step Navigation Buttons */}
           <div className="flex justify-between mt-6">

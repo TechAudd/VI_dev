@@ -21,6 +21,39 @@ export default function AllForm() {
 
         fetchForms();
     }, []);
+
+    // Toggle status between "Inprocess" and "Complete"
+    const toggleStatus = async (id, currentStatus) => {
+        try {
+            const newStatus = currentStatus === "Inprocess" ? "Complete" : "Inprocess";
+            console.log("New status:", newStatus);
+            await axios.patch(`http://localhost:4100/api/form/updateFormById/${id}`, { status: newStatus });
+
+            // Update UI immediately
+            setFormData(prevForms =>
+                prevForms.map(form =>
+                    form.id === id ? { ...form, status: newStatus } : form
+                )
+            );
+
+            toast.success(`Status updated to ${newStatus}`);
+        } catch (error) {
+            console.error("Error updating form status:", error.message);
+            toast.error("Failed to update form status.");
+        }
+    };
+    // `${import.meta.env.VITE_APP_BASE_URL}/api/employee/updateFormById/${id}`,
+
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`http://localhost:4100/api/form/deleteFormById/${id}`);
+            setFormData(prevForms => prevForms.filter(form => form.id !== id));
+            toast.success("Form deleted successfully");
+        } catch (error) {
+            console.error("Error deleting form:", error.message);
+            toast.error("Failed to delete form");
+        }
+    }
     return (
         <>
             <div className="border-gray-300 w-full">
@@ -33,9 +66,9 @@ export default function AllForm() {
                                     <th className="p-3 border border-gray-300">SR NO</th>
                                     <th className="p-3 border border-gray-300">General Information</th>
                                     <th className="p-3 border border-gray-300">Structural System</th>
-                                    <th className="p-3 border border-gray-300">Leaning</th>
                                     <th className="p-3 border border-gray-300">Cracking</th>
                                     <th className="p-3 border border-gray-300">Settlement</th>
+                                    <th className="p-3 border border-gray-300">Status</th>
                                     <th className="p-3 border border-gray-300">Actions</th>
                                 </tr>
                             </thead>
@@ -46,14 +79,35 @@ export default function AllForm() {
                                             <td className="p-3 border border-gray-300">{index + 1}</td>
                                             <td className="p-3 border border-gray-300">{form.part1GeneralInformation?.join(", ") || "N/A"}</td>
                                             <td className="p-3 border border-gray-300">{form.part2StructuralSystem?.join(", ") || "N/A"}</td>
-                                            <td className="p-3 border border-gray-300">{form.leaningOfBuilding ? "Yes" : "No"}</td>
                                             <td className="p-3 border border-gray-300">{form.defect_cracking || "N/A"}</td>
                                             <td className="p-3 border border-gray-300">{form.defect_settlement || "N/A"}</td>
-                                            <td className="p-3 border border-gray-300 flex justify-center gap-2">
+                                            <td className="p-3 border border-gray-300">
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={form.status === "Complete"}
+                                                        onChange={() => toggleStatus(form.id, form.status)}
+                                                        className="sr-only peer"
+                                                    />
+                                                    <div
+                                                        className={`w-11 h-6 rounded-full ${form.status === "Complete"
+                                                            ? "bg-green-500 peer-focus:ring-2 peer-focus:ring-green-300"
+                                                            : "bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300"
+                                                            } transition-all`}
+                                                    ></div>
+                                                    <div
+                                                        className={`absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-transform duration-200 transform ${form.status === "Complete" ? "translate-x-5" : ""
+                                                            }`}
+                                                    ></div>
+                                                </label>
+                                            </td>
+                                            <td className="p-6 flex justify-center">
                                                 {/* <button className="text-blue-500">
                                                     <AiFillEdit size={20} />
                                                 </button> */}
-                                                <button className="text-red-500">
+                                                <button className="ml-3 cursor-pointer text-red-600"
+                                                    onClick={() => handleDelete(form.id)}
+                                                >
                                                     <AiFillDelete size={20} />
                                                 </button>
                                             </td>

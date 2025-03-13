@@ -1,6 +1,6 @@
 // routes/formRouter.js
 const express = require("express");
-const { createForm, getAllForms, deleteFormById } = require("../controllers/formController");
+const { createForm, getAllForms, deleteFormById, updateFormById } = require("../controllers/formController");
 
 const router = express.Router();
 
@@ -91,5 +91,41 @@ router.get("/getAllForms", getAllForms);
  *         description: Error deleting form
  */
 router.delete("/deleteFormById/:id", deleteFormById);
+
+/**
+ * @swagger
+ * /api/form/updateFormById/{id}:
+ *   put:
+ *     summary: Update a form by ID (Path Param)
+ *     tags: [Form]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the form to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               field1:
+ *                 type: string
+ *               field2:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Form updated successfully
+ *       400:
+ *         description: Missing ID in parameters
+ *       404:
+ *         description: Form not found or no changes made
+ *       500:
+ *         description: Error updating form
+ */
+router.patch("/updateFormById/:id", updateFormById);
 
 module.exports = router;
