@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const User = require("./User"); 
 
 const Form = sequelize.define("Form", {
   id: {
@@ -7,8 +8,16 @@ const Form = sequelize.define("Form", {
     autoIncrement: true,
     primaryKey: true,
   },
+  userId: {  
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: "id",
+    },
+    onDelete: "CASCADE", 
+  },
 
-  // Arrays
   part1GeneralInformation: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
@@ -18,25 +27,11 @@ const Form = sequelize.define("Form", {
     allowNull: true,
   },
 
-  // Survey Signs
-  leaningOfBuilding: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-  },
-  settlement_floor: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-  },
-  settlement_wall: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-  },
-  settlement_foundation: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-  },
+  leaningOfBuilding: { type: DataTypes.BOOLEAN, allowNull: true },
+  settlement_floor: { type: DataTypes.BOOLEAN, allowNull: true },
+  settlement_wall: { type: DataTypes.BOOLEAN, allowNull: true },
+  settlement_foundation: { type: DataTypes.BOOLEAN, allowNull: true },
 
-  // Defects
   defect_cracking: { type: DataTypes.STRING, allowNull: true },
   defect_settlement: { type: DataTypes.STRING, allowNull: true },
   defect_structural: { type: DataTypes.STRING, allowNull: true },
@@ -56,13 +51,8 @@ const Form = sequelize.define("Form", {
   defect_delaminationDebonding: { type: DataTypes.STRING, allowNull: true },
   defect_crackingOthers: { type: DataTypes.STRING, allowNull: true },
 
-  // Overall condition
-  overallCondition: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+  overallCondition: { type: DataTypes.STRING, allowNull: true },
 
-  // Recommendations (flattened)
   recommendation_noActionRequired: { type: DataTypes.STRING, allowNull: true },
   recommendation_repairStrengthening: { type: DataTypes.STRING, allowNull: true },
   recommendation_detailedAssessmentRequired: { type: DataTypes.STRING, allowNull: true },
@@ -83,4 +73,9 @@ const Form = sequelize.define("Form", {
   timestamps: false,
 });
 
+// Define associations
+User.hasMany(Form, { foreignKey: "userId" });
+Form.belongsTo(User, { foreignKey: "userId" });
+
 module.exports = Form;
+

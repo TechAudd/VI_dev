@@ -3,7 +3,7 @@ const Form = require("../models/Form");
 // Create Form
 const createForm = async (req, res) => {
     try {
-        const newForm = await Form.create({ ...req.body});
+        const newForm = await Form.create({ ...req.body, userId: req.body.userId });
         return res.status(201).json({ message: "Form submitted successfully", form: newForm });
     } catch (error) {
         return res.status(500).json({ message: "Error submitting form", error });
@@ -15,9 +15,9 @@ const getAllForms = async (req, res) => {
     try {
         let forms;
         if (req.user.role === "Admin") {
-            forms = await Form.findAll(); 
+            forms = await Form.findAll();
         } else {
-            forms = await Form.findAll({ where: { userId: req.user.id } }); 
+            forms = await Form.findAll({ where: { userId: req.user.id } });
         }
         return res.status(200).json(forms);
     } catch (error) {

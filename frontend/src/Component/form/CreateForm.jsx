@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import { jwtDecode } from "jwt-decode";
 
 export default function CreateForm({ setIsVisible, setShowModal }) {
   const navigator = useNavigate();
+  const token = localStorage.getItem("token");
+  const decode = jwtDecode(token);
+  const userId = decode.id;
+
   const part1Questions = [
     "Name and address of the building, year of construction",
     "TYPE OF THE BUILDING - Load bearing/party load bearing and partly RCC/RCC frame",
@@ -96,6 +101,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
     e.preventDefault();
 
     const payload = {
+      userId,
       part1GeneralInformation: part1Data,
       part2StructuralSystem: part2Data,
 
@@ -136,7 +142,16 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
     };
 
     try {
-      const response = await axios.post("http://localhost:4100/api/form/createForm", payload);
+      const response = await axios.post(
+        "http://localhost:4100/api/form/createForm",
+        payload, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );      
       if (response.status === 201) {
         toast.success(`Form Submitted Successfully!`);
         setShowModal(false);

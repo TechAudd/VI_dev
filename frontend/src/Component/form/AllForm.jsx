@@ -4,6 +4,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 export default function AllForm() {
+    const token = localStorage.getItem("token");
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState([]);
 
@@ -11,7 +12,11 @@ export default function AllForm() {
     useEffect(() => {
         const fetchForms = async () => {
             try {
-                const response = await axios.get("http://localhost:4100/api/form/getAllForms");
+                const response = await axios.get("http://localhost:4100/api/form/getAllForms", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 setFormData(response.data);
             } catch (error) {
                 console.error("Error fetching forms", error);
@@ -26,8 +31,12 @@ export default function AllForm() {
     const toggleStatus = async (id, currentStatus) => {
         try {
             const newStatus = currentStatus === "Inprocess" ? "Complete" : "Inprocess";
-            console.log("New status:", newStatus);
-            await axios.patch(`http://localhost:4100/api/form/updateFormById/${id}`, { status: newStatus });
+            await axios.patch(`http://localhost:4100/api/form/updateFormById/${id}`, { status: newStatus }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
             // Update UI immediately
             setFormData(prevForms =>
@@ -39,19 +48,24 @@ export default function AllForm() {
             toast.success(`Status updated to ${newStatus}`);
         } catch (error) {
             console.error("Error updating form status:", error.message);
-            toast.error("Failed to update form status.");
+            toast.error("Access Denied: Admins Only");
         }
     };
     // `${import.meta.env.VITE_APP_BASE_URL}/api/employee/updateFormById/${id}`,
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:4100/api/form/deleteFormById/${id}`);
+            await axios.delete(`http://localhost:4100/api/form/deleteFormById/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
             setFormData(prevForms => prevForms.filter(form => form.id !== id));
             toast.success("Form deleted successfully");
         } catch (error) {
             console.error("Error deleting form:", error.message);
-            toast.error("Failed to delete form");
+            toast.error("Access Denied: Admins Only");
         }
     }
     return (
