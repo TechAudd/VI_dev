@@ -54,10 +54,6 @@ const Form = sequelize.define("Form", {
   overallCondition: { type: DataTypes.STRING, allowNull: true },
 
   recommendation_noActionRequired: { type: DataTypes.STRING, allowNull: true },
-  recommendation_repairStrengthening: { type: DataTypes.STRING, allowNull: true },
-  recommendation_detailedAssessmentRequired: { type: DataTypes.STRING, allowNull: true },
-  recommendation_barricadeNonUse: { type: DataTypes.STRING, allowNull: true },
-  recommendation_reconstruction: { type: DataTypes.STRING, allowNull: true },
 
   status: {
     type: DataTypes.ENUM("Inprocess", "Complete"),

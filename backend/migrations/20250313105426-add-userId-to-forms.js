@@ -1,17 +1,22 @@
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn("Forms", "userId", {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
-      onDelete: "CASCADE",
+  up: async (queryInterface, Sequelize) => {
+    // Check if column exists before adding it
+    return queryInterface.describeTable("Forms").then((tableDefinition) => {
+      if (!tableDefinition.userId) {
+        return queryInterface.addColumn("Forms", "userId", {
+          type: Sequelize.INTEGER,
+          references: {
+            model: "Users",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "SET NULL",
+        });
+      }
     });
   },
 
-  async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn("Forms", "userId");
+  down: async (queryInterface) => {
+    return queryInterface.removeColumn("Forms", "userId");
   },
 };

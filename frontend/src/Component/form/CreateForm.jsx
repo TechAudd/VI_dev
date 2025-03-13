@@ -135,23 +135,19 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
 
       // Add other defect and recommendation fields as needed
       recommendation_noActionRequired: formData.recommendation_noActionRequired || null,
-      recommendation_repairStrengthening: formData.recommendation_repairStrengthening || null,
-      recommendation_detailedAssessmentRequired: formData.recommendation_detailedAssessmentRequired || null,
-      recommendation_reconstruction: formData.recommendation_reconstruction || null,
-      recommendation_barricadeNonUse: formData.recommendation_barricadeNonUse || null,
     };
 
     try {
       const response = await axios.post(
         "http://localhost:4100/api/form/createForm",
-        payload, 
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
-      );      
+      );
       if (response.status === 201) {
         toast.success(`Form Submitted Successfully!`);
         setShowModal(false);
@@ -441,41 +437,39 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
 
               {/* 5. Recommendations in Table with Inputs */}
               <div>
-                <label className="block font-semibold text-gray-700 mb-2">5. Recommendations</label>
+                <label className="block font-semibold text-gray-700 mb-2">6. RECOMMENDATIONS</label>
                 <div className="overflow-auto border border-gray-300 rounded">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="border p-2 text-left">Recommendation</th>
-                        <th className="border p-2 text-left">Remarks (if any)</th>
-                      </tr>
-                    </thead>
+                  <table className="w-full text-sm border-collapse">
                     <tbody>
-                      {[
-                        { key: "recommendation_noActionRequired", label: "No further action required" },
-                        { key: "recommendation_repairStrengthening", label: "Repair/strengthening works necessary" },
-                        { key: "recommendation_detailedAssessmentRequired", label: "Detailed assessment required" },
-                        { key: "recommendation_barricadeNonUse", label: "Barricade/non-use of unsafe areas" },
-                        { key: "recommendation_reconstruction", label: "Reconstruction or any other reasons" },
-                      ].map((item, index) => (
-                        <tr key={index}>
-                          <td className="border p-2">{item.label}</td>
-                          <td className="border p-2">
-                            <input
-                              type="text"
-                              className="w-full border rounded p-1"
-                              value={formData[item.key] || ""}
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  [item.key]: e.target.value,
-                                }))
-                              }
-                              placeholder="Enter remarks (optional)"
-                            />
-                          </td>
-                        </tr>
-                      ))}
+                      <tr>
+                        <td className="border p-2 w-10 text-center font-semibold">6</td>
+                        <td className="border p-2 font-semibold">RECOMMENDATIONS</td>
+                        <td className="border p-2">Good condition</td>
+                      </tr>
+                      <tr>
+                        <td className="border p-2"></td>
+                        <td className="border p-2 whitespace-pre-line">
+                          (a) No further action required<br />
+                          (b) Repair/strengthening works necessary<br />
+                          (c) Detailed assessment required<br />
+                          (d) Barricade/non-use needed<br />
+                          (e) Reconstruction or any other reasons
+                        </td>
+                        <td className="border p-2">
+                          <input
+                            type="text"
+                            className="w-full border rounded p-4"
+                            value={formData.recommendation_noActionRequired || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                recommendation_noActionRequired: e.target.value,
+                              }))
+                            }
+                            placeholder="Enter remarks (optional)"
+                          />
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
