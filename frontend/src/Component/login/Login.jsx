@@ -129,13 +129,13 @@ const LoginForm = () => {
           </button>
         </div>
       </form>
-      <p className="mt-2">
+      {/* <p className="mt-2">
         If Not registerd?{" "}
         <Link to="/register" className="font-bold">
           {" "}
           Register
         </Link>
-      </p>
+      </p> */}
     </div>
   );
 };

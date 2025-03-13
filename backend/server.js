@@ -6,8 +6,10 @@ const authRoutes = require("./routes/authRoutes");
 const formRoutes = require("./routes/formRoutes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./docs/swagger.json");
+const cookieParser = require("cookie-parser");
 
 const app = express();
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 

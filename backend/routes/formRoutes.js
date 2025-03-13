@@ -1,6 +1,7 @@
 // routes/formRouter.js
 const express = require("express");
 const { createForm, getAllForms, deleteFormById, updateFormById } = require("../controllers/formController");
+const { auth } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -65,7 +66,7 @@ router.post("/createForm", createForm);
  *       200:
  *         description: Returns all form entries
  */
-router.get("/getAllForms", getAllForms);
+router.get("/getAllForms", auth, getAllForms);
 
 /**
  * @swagger
@@ -90,7 +91,7 @@ router.get("/getAllForms", getAllForms);
  *       500:
  *         description: Error deleting form
  */
-router.delete("/deleteFormById/:id", deleteFormById);
+router.delete("/deleteFormById/:id", auth, deleteFormById);
 
 /**
  * @swagger
@@ -126,6 +127,6 @@ router.delete("/deleteFormById/:id", deleteFormById);
  *       500:
  *         description: Error updating form
  */
-router.patch("/updateFormById/:id", updateFormById);
+router.patch("/updateFormById/:id", auth, updateFormById);
 
 module.exports = router;

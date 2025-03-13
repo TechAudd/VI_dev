@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function CreateForm({ setIsVisible, setShowModal }) {
+  const navigator = useNavigate();
   const part1Questions = [
     "Name and address of the building, year of construction",
     "TYPE OF THE BUILDING - Load bearing/party load bearing and partly RCC/RCC frame",
@@ -134,9 +137,10 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
 
     try {
       const response = await axios.post("http://localhost:4100/api/form/createForm", payload);
-      if (response.status === 200) {
-        alert("Form submitted successfully!");
+      if (response.status === 201) {
+        toast.success(`Form Submitted Successfully!`);
         setShowModal(false);
+        navigator("/createForm");
         setIsVisible(true);
       }
     } catch (err) {
@@ -148,6 +152,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
   return (
     <div className="w-full">
       <div className="bg-white rounded-lg shadow-lg p-6">
+        <Toaster position="top-center" />
         <h2 className="text-xl font-bold text-center mb-4">Building Assessment Form</h2>
 
         {/* Step Indicator */}
