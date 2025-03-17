@@ -19,7 +19,7 @@ function Navbar() {
             <div className="bg-white h-16 justify-between items-center mx-auto px-4 flex">
               <Link
                 to={"/"}
-                className="flex  xl:ml-0 ml-7 justify-center gap-0 items-center"
+                className="flex  xl:ml-0  ml-8  justify-center gap-0 items-center"
               >
                 {/* <img src={logo} alt="logo" className="h-14" /> */}
                 {/* <video
@@ -33,11 +33,11 @@ function Navbar() {
                   src="../../public/logo.webp"
                   className="object-contain w-40"
                 /> */}
-                <p className=" mb-2 text-xl font-bold ">Visual Inspection</p>
+                <p className="  text-xl font-bold md:ml-24 ml-4">Visual Inspection</p>
 
               </Link>
               <div className="md:space-x-6 justify-center items-center ml-auto  space-x-3 flex ">
-                <FullScreenButton />
+                {/* <FullScreenButton /> */}
                 {/* <Notifications /> */}
 
                 <div className="justify-center items-center flex relative gap-3">

@@ -14,7 +14,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
     "Name and address of the building, year of construction",
     "TYPE OF THE BUILDING - Load bearing/party load bearing and partly RCC/RCC frame",
     "Number of stories in each block of the building",
-    "Description of the main usage of the building: Residential/education/office/hostel/workshop/hospital/any other specify",
+    `Description of the main usage of the building:\nResidential/education/office/hostel/workshop\n/hospital/any other specify`,
     "TYPE OF FLOOR AND ROOF - RCC/Wooden/steel",
     "Year of construction, Maintenance history of the building if known to be mentioned",
   ];
@@ -223,7 +223,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
           {/* STEP 3 */}
           {step === 3 && (
             <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">
+              <h3 className="text-lg font-semibold mb-2">
                 PART 3: Survey of Signs of Distress, Deformation, or Deterioration in Building Structure (Condition Assessment)
               </h3>
 
