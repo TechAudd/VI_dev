@@ -1,8 +1,10 @@
 const express = require("express");
-const { signup, login } = require("../controllers/authController");
+const { signup, login, logout, refreshToken } = require("../controllers/authController");
+const { auth } = require("../middleware/auth");
 
 const router = express.Router();
 
+// ✅ SIGNUP ROUTE
 /**
  * @swagger
  * /api/auth/signup:
@@ -28,6 +30,7 @@ const router = express.Router();
  */
 router.post("/signup", signup);
 
+// ✅ LOGIN ROUTE
 /**
  * @swagger
  * /api/auth/login:
@@ -50,5 +53,16 @@ router.post("/signup", signup);
  *         description: Login successful
  */
 router.post("/login", login);
+
+// ✅ LOGOUT ROUTE
+router.post("/logout", logout);
+
+// ✅ REFRESH TOKEN ROUTE
+router.get("/refreshToken", refreshToken);
+
+// ✅ PROTECTED ROUTE
+router.get("/protected-route", auth, (req, res) => {
+    res.json({ success: true, message: "Access to protected route granted", user: req.user });
+});
 
 module.exports = router;

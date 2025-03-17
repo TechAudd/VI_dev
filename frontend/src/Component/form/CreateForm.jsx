@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 
 export default function CreateForm({ setIsVisible, setShowModal }) {
   const navigator = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const decode = jwtDecode(token);
   const userId = decode.id;
 
@@ -437,12 +437,12 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
 
               {/* 5. Recommendations in Table with Inputs */}
               <div>
-                <label className="block font-semibold text-gray-700 mb-2">6. RECOMMENDATIONS</label>
+                <label className="block font-semibold text-gray-700 mb-2">5. RECOMMENDATIONS</label>
                 <div className="overflow-auto border border-gray-300 rounded">
                   <table className="w-full text-sm border-collapse">
                     <tbody>
                       <tr>
-                        <td className="border p-2 w-10 text-center font-semibold">6</td>
+                        <td className="border p-2 w-10 text-center font-semibold">5</td>
                         <td className="border p-2 font-semibold">RECOMMENDATIONS</td>
                         <td className="border p-2">Good condition</td>
                       </tr>

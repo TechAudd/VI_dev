@@ -4,6 +4,7 @@ import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import axios from "axios";
+import API from "../../api/axiosInstance"
 
 const Login = () => {
   return (
@@ -33,24 +34,25 @@ const LoginForm = () => {
   };
 
   const handleToken = (token) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("accessToken", token);
     navigate("/");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_BASE_URL}/auth/login`,
+      const response = await API.post("/auth/login",
         {
           email,
           password,
-        }
+        },
+        { withCredentials: true }
       );
       if (response.data.success) {
-        const token = response.data.token;
+        const token = response.data.accessToken;
         handleToken(token);
         console.log("Login successful:", response.data);
       } else {

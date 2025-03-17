@@ -4,7 +4,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 export default function AllForm() {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState([]);
 
