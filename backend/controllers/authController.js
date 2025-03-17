@@ -88,7 +88,7 @@ const logout = (req, res) => {
 
 };
 
-// Refresh Token
+// RefreshToken
 const refreshToken = async (req, res) => {
     try {
         const refreshToken = req.cookies?.refreshToken;
