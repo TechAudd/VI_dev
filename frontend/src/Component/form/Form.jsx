@@ -16,12 +16,12 @@ export default function Form() {
     const [limit, setLimit] = useState(5);
 
     return (
-        <div className="flex flex-col justify-center items-center my-4 w-full px-4 py-2">
+        <div className="flex flex-col justify-center items-center my-0 lg:my-4 w-full px-1 py-1 lg:px-4 lg:py-2">
             <Toaster />
             {isVisible && (
                 <div className="m-4 w-full flex justify-between items-center">
                     <button
-                        className="bg-blue-700 mx-4 self-start text-white active:bg-blue-900 font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="bg-blue-700 self-start text-white active:bg-blue-900 font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
                         onClick={() => {
                             setShowModal(true);

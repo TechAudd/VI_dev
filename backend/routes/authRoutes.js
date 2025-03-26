@@ -61,7 +61,7 @@ router.post("/logout", logout);
 router.get("/refreshToken", refreshToken);
 
 // ✅ PROTECTED ROUTE
-router.get("/protected-route", auth, (req, res) => {
+router.get("/protected-route", (req, res) => {
     res.json({ success: true, message: "Access to protected route granted", user: req.user });
 });
 

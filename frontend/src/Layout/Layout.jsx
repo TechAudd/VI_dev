@@ -8,7 +8,7 @@ const Layout = () => {
       <div className="bg-gray-100">
         <Navbar />
         <div
-          className="xl:ml-20 ml-0 p-4 bg-cover bg-center"
+          className="xl:ml-20 ml-0 p-0 lg-p-4 bg-cover bg-center"
         // style={{
         //   backgroundImage: "url('/public/bg.webp')",
         // }}

@@ -165,7 +165,12 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
       <div className="bg-white rounded-lg shadow-lg p-6">
         <Toaster position="top-center" />
         <h2 className="text-xl font-bold text-center mb-4">Building Assessment Form</h2>
-
+        <h2 className="text-xl font-bold text-center mb-4 uppercase">
+          Condition Assessment of Residential Building
+        </h2>
+        <h3 className="text-lg font-semibold text-center mb-4">
+          Visual Inspection Form
+        </h3>
         {/* Step Indicator */}
         <div className="flex justify-center gap-4 mb-4">
           {['Step 1', 'Step 2', 'Step 3'].map((label, idx) => (
@@ -179,17 +184,12 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
           {/* STEP 1 */}
           {step === 1 && (
             <div>
-              <h2 className="text-xl font-bold text-center mb-4 uppercase">
-                Condition Assessment of Residential Building
-              </h2>
-              <h3 className="text-lg font-semibold text-center mb-4">
-                Visual Inspection Form
-              </h3>
+
               <h3 className="text-lg font-semibold mb-2">PART 1 GENERAL INFORMATION OF THE BUILDING</h3>
               {part1Questions.map((q, i) => (
                 <div key={i} className="mb-3">
                   <label className="block mb-1">{i + 1}. {q}</label>
-                  <input
+                  <textarea
                     type="text"
                     className="w-full border rounded p-2"
                     value={part1Data[i]}
@@ -200,7 +200,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
               ))}
             </div>
           )}
-
+{/* w-96 */}
           {/* STEP 2 */}
           {step === 2 && (
             <div>
@@ -208,7 +208,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
               {part2Questions.map((q, i) => (
                 <div key={i} className="mb-3">
                   <label className="block mb-1">{i + 1}. {q}</label>
-                  <input
+                  <textarea
                     type="text"
                     className="w-full border rounded p-2"
                     value={part2Data[i]}
@@ -456,7 +456,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                           (e) Reconstruction or any other reasons
                         </td>
                         <td className="border p-2">
-                          <input
+                          <textarea
                             type="text"
                             className="w-full border rounded p-4"
                             value={formData.recommendation_noActionRequired || ""}

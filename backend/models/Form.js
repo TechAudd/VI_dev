@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const User = require("./User"); 
+const User = require("./User");
 
 const Form = sequelize.define("Form", {
   id: {
@@ -8,14 +8,14 @@ const Form = sequelize.define("Form", {
     autoIncrement: true,
     primaryKey: true,
   },
-  userId: {  
+  userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: User,
       key: "id",
     },
-    onDelete: "CASCADE", 
+    onDelete: "CASCADE",
   },
 
   part1GeneralInformation: {
@@ -62,6 +62,10 @@ const Form = sequelize.define("Form", {
   },
 
   createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  updatedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },

@@ -79,9 +79,9 @@ export default function AllForm() {
                                 <tr>
                                     <th className="p-3 border border-gray-300">SR NO</th>
                                     <th className="p-3 border border-gray-300">General Information</th>
-                                    <th className="p-3 border border-gray-300">Structural System</th>
-                                    <th className="p-3 border border-gray-300">Cracking</th>
-                                    <th className="p-3 border border-gray-300">Settlement</th>
+                                    <th className="p-3 border border-gray-300">Submitted by</th>
+                                    <th className="p-3 border border-gray-300">Created Date</th>
+                                    <th className="p-3 border border-gray-300">Last Update</th>
                                     <th className="p-3 border border-gray-300">Status</th>
                                     <th className="p-3 border border-gray-300">Actions</th>
                                 </tr>
@@ -93,7 +93,11 @@ export default function AllForm() {
                                             <td className="p-3 border border-gray-300">{index + 1}</td>
                                             <td className="p-3 border border-gray-300">{form.part1GeneralInformation?.join(", ") || "N/A"}</td>
                                             <td className="p-3 border border-gray-300">{form.part2StructuralSystem?.join(", ") || "N/A"}</td>
-                                            <td className="p-3 border border-gray-300">{form.defect_cracking || "N/A"}</td>
+                                            <td className="p-3 border border-gray-300">
+                                                {form.createdAt
+                                                    ? new Date(form.createdAt).toLocaleDateString("en-GB")
+                                                    : "N/A"}
+                                            </td>
                                             <td className="p-3 border border-gray-300">{form.defect_settlement || "N/A"}</td>
                                             <td className="p-3 border border-gray-300">
                                                 <label className="relative inline-flex items-center cursor-pointer">
@@ -116,9 +120,9 @@ export default function AllForm() {
                                                 </label>
                                             </td>
                                             <td className="p-6 flex justify-center">
-                                                {/* <button className="text-blue-500">
+                                                <button className="text-blue-500">
                                                     <AiFillEdit size={20} />
-                                                </button> */}
+                                                </button>
                                                 <button className="ml-3 cursor-pointer text-red-600"
                                                     onClick={() => handleDelete(form.id)}
                                                 >
