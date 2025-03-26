@@ -9,6 +9,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
   const token = localStorage.getItem("accessToken");
   const decode = jwtDecode(token);
   const userId = decode.id;
+  const userName = decode.name;
 
   const part1Questions = [
     "Name and address of the building, year of construction",
@@ -102,6 +103,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
 
     const payload = {
       userId,
+      userName,
       part1GeneralInformation: part1Data,
       part2StructuralSystem: part2Data,
 

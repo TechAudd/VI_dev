@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 export default function AllForm() {
     const token = localStorage.getItem("accessToken");
+    const decoded = jwtDecode(token);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState([]);
 
@@ -20,7 +22,7 @@ export default function AllForm() {
                 setFormData(response.data);
             } catch (error) {
                 console.error("Error fetching forms", error);
-                toast.error("Failed to load forms");
+                toast.error("No Form Available");
             }
         };
 
@@ -91,14 +93,20 @@ export default function AllForm() {
                                     formData.map((form, index) => (
                                         <tr key={form.id} className="text-center border border-gray-300">
                                             <td className="p-3 border border-gray-300">{index + 1}</td>
-                                            <td className="p-3 border border-gray-300">{form.part1GeneralInformation?.join(", ") || "N/A"}</td>
-                                            <td className="p-3 border border-gray-300">{form.part2StructuralSystem?.join(", ") || "N/A"}</td>
+                                            <td className="p-3 border border-gray-300">
+                                                {form.part1GeneralInformation?.slice(0, 2).join(", ") || "N/A"}
+                                            </td>
+                                            <td className="p-3 border border-gray-300">{form.userName || "N/A"}</td>
                                             <td className="p-3 border border-gray-300">
                                                 {form.createdAt
                                                     ? new Date(form.createdAt).toLocaleDateString("en-GB")
                                                     : "N/A"}
                                             </td>
-                                            <td className="p-3 border border-gray-300">{form.defect_settlement || "N/A"}</td>
+                                            <td className="p-3 border border-gray-300">
+                                                {form.updatedAt
+                                                    ? new Date(form.createdAt).toLocaleDateString("en-GB")
+                                                    : "N/A"}
+                                            </td>
                                             <td className="p-3 border border-gray-300">
                                                 <label className="relative inline-flex items-center cursor-pointer">
                                                     <input

@@ -8,6 +8,10 @@ const Form = sequelize.define("Form", {
     autoIncrement: true,
     primaryKey: true,
   },
+  userName:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
