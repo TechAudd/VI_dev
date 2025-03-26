@@ -1,24 +1,37 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { User } = require("../models");
+const { User, RefreshToken } = require("../models");
 
 // Access Token 
 const generateAccessToken = (user) => {
+    const expiresIn = 15 * 60; // 15 seconds
+    const expTimestamp = Math.floor(Date.now() / 1000) + expiresIn;
+
     return jwt.sign(
-        { id: user.id, name: user.name, email: user.email, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: "15m" } // Short-lived access token
+        {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            exp: expTimestamp,
+        },
+        process.env.JWT_SECRET
     );
 };
 
 // Refresh Token
-const generateRefreshToken = (user) => {
-    return jwt.sign(
-        { id: user.id },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "7d" } // Long-lived refresh token
+const generateRefreshToken = async (user) => {
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
     );
-};
+  
+    // Store Refresh Token in DB
+    await RefreshToken.create({ userId: user.id, token: refreshToken });
+    
+    return refreshToken;
+  };
 
 // Signup
 const signup = async (req, res) => {
