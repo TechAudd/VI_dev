@@ -162,6 +162,6 @@ router.patch("/updateFormById/:id", auth, updateFormById);
  *       500:
  *         description: Error updating form
  */
-router.patch("/getFormById/:id", getFormById);
+router.patch("/getFormById/:id", auth, getFormById);
 
 module.exports = router;

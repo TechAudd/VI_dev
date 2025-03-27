@@ -286,7 +286,7 @@ export default function AllForm() {
                                                     ? new Date(form.createdAt).toLocaleDateString("en-GB")
                                                     : "N/A"}
                                             </td>
-                                            <td className="p-3 border border-gray-300">
+                                            {/* <td className="p-3 border border-gray-300">
                                                 <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
                                                         type="checkbox"
@@ -305,7 +305,8 @@ export default function AllForm() {
                                                             }`}
                                                     ></div>
                                                 </label>
-                                            </td>
+                                            </td> */}
+                                            <td className="p-3 border border-gray-300">{form.status || "N/A"}</td>
                                             <td className="p-6 flex justify-center">
                                                 <button className="text-blue-500"
                                                     onClick={() => {

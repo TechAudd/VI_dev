@@ -15,9 +15,14 @@ const getAllForms = async (req, res) => {
     try {
         let forms;
         if (req.user.role === "Admin") {
-            forms = await Form.findAll();
+            forms = await Form.findAll({
+                order: [["createdAt", "DESC"]],
+            });
         } else {
-            forms = await Form.findAll({ where: { userId: req.user.id } });
+            forms = await Form.findAll({
+                where: { userId: req.user.id },
+                order: [["createdAt", "DESC"]],
+            });
         }
         return res.status(200).json(forms);
     } catch (error) {
