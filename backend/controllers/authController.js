@@ -22,16 +22,12 @@ const generateAccessToken = (user) => {
 // Refresh Token
 const generateRefreshToken = async (user) => {
     const refreshToken = jwt.sign(
-      { id: user.id },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "7d" }
+        { id: user.id },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: "7d" }
     );
-  
-    // Store Refresh Token in DB
-    await RefreshToken.create({ userId: user.id, token: refreshToken });
-    
     return refreshToken;
-  };
+};
 
 // Signup
 const signup = async (req, res) => {

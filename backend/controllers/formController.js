@@ -77,5 +77,28 @@ const updateFormById = async (req, res) => {
     }
 };
 
+// Get Form by ID
+const getFormById = async (req, res) => {
+    try {
+        const { id } = req.params;
 
-module.exports = { createForm, getAllForms, deleteFormById, updateFormById };
+        if (!id) {
+            return res.status(400).json({ message: "Form ID is required in parameters" });
+        }
+
+        const form = await Form.findByPk(id);
+        if (!form) {
+            return res.status(404).json({ message: "Form not found" });
+        }
+
+        if (req.user.role !== "Admin" && form.userId !== req.user.id) {
+            return res.status(403).json({ message: "Access Denied: You can only view your own forms" });
+        }
+
+        return res.status(200).json(form);
+    } catch (error) {
+        return res.status(500).json({ message: "Error fetching form", error });
+    }
+}
+
+module.exports = { createForm, getAllForms, deleteFormById, updateFormById, getFormById };

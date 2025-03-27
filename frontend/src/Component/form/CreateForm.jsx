@@ -165,6 +165,17 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
   return (
     <div className="w-full">
       <div className="bg-white rounded-lg shadow-lg p-6">
+        <button
+          className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+          onClick={() => {
+            setShowModal(false);
+            setIsVisible(true);
+          }}
+        >
+          <span className="text-red-500 bg-transparent h-6 w-6 text-2xl block outline-none focus:outline-none">
+            ×
+          </span>
+        </button>
         <Toaster position="top-center" />
         <h2 className="text-xl font-bold text-center mb-4">Building Assessment Form</h2>
         <h2 className="text-xl font-bold text-center mb-4 uppercase">
@@ -181,7 +192,6 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
             </div>
           ))}
         </div>
-
         <form onSubmit={handleSubmit}>
           {/* STEP 1 */}
           {step === 1 && (
@@ -193,7 +203,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                   <label className="block mb-1">{i + 1}. {q}</label>
                   <textarea
                     type="text"
-                    className="w-full border rounded p-2"
+                    className="w-[50%] border rounded p-2"
                     value={part1Data[i]}
                     onChange={(e) => handlePart1Change(i, e.target.value)}
                     required
@@ -202,7 +212,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
               ))}
             </div>
           )}
-{/* w-96 */}
+          {/* w-96 */}
           {/* STEP 2 */}
           {step === 2 && (
             <div>
@@ -212,7 +222,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                   <label className="block mb-1">{i + 1}. {q}</label>
                   <textarea
                     type="text"
-                    className="w-full border rounded p-2"
+                    className="w-[50%] border rounded p-2"
                     value={part2Data[i]}
                     onChange={(e) => handlePart2Change(i, e.target.value)}
                     required

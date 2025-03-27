@@ -13,7 +13,7 @@ app.use(cookieParser());
 
 // ✅ CORS Configuration
 const corsOptions = {
-    origin: "http://localhost:5174", // Frontend URL
+    origin: "http://localhost:5173", // Frontend URL
     credentials: true, // Allows cookies
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: "Content-Type,Authorization",

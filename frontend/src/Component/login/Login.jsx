@@ -72,7 +72,7 @@ const LoginForm = () => {
   return (
     <div className="h-full w-full flex flex-col justify-center items-start px-8 text-[#203d5d]">
       {/* <img src={logo} alt="logo" className="max-w-40 mb-10" /> */}
-      <p className=" mb-5 text-4xl font-bold ">Mahindra University</p>
+      <p className=" mb-5 text-4xl font-bold ">Visual Inspection</p>
       <form className="space-y-6 w-full max-w-sm" onSubmit={handleSubmit}>
 
         {/* Email Field */}

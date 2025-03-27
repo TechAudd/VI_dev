@@ -1,5 +1,5 @@
 const express = require("express");
-const { createForm, getAllForms, deleteFormById, updateFormById } = require("../controllers/formController");
+const { createForm, getAllForms, deleteFormById, updateFormById, getFormById } = require("../controllers/formController");
 const { auth, isAdmin } = require("../middleware/auth");
 
 const router = express.Router();
@@ -126,6 +126,42 @@ router.delete("/deleteFormById/:id", auth, isAdmin, deleteFormById);
  *       500:
  *         description: Error updating form
  */
-router.patch("/updateFormById/:id", auth, isAdmin, updateFormById);
+router.patch("/updateFormById/:id", auth, updateFormById);
+
+/**
+ * @swagger
+ * /api/form/updateFormById/{id}:
+ *   put:
+ *     summary: Update a form by ID (Path Param)
+ *     tags: [Form]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the form to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               field1:
+ *                 type: string
+ *               field2:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Form updated successfully
+ *       400:
+ *         description: Missing ID in parameters
+ *       404:
+ *         description: Form not found or no changes made
+ *       500:
+ *         description: Error updating form
+ */
+router.patch("/getFormById/:id", getFormById);
 
 module.exports = router;
