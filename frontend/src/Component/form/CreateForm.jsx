@@ -294,31 +294,65 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                       {[
                         { key: "defect_cracking", label: "Cracking" },
                         { key: "defect_settlement", label: "Settlement" },
-                        { key: "defect_thermalCracking", label: "Thermal cracking" },
+                        { key: "defect_thermalCracking", label: "Thermal Cracking" },
                         { key: "defect_structural", label: "Structural" },
                         { key: "defect_crazing", label: "Crazing" },
                         { key: "defect_honeycombing", label: "Honeycombing" },
-                        { key: "defect_wallCracks", label: "Cracking in load-bearing walls/ Infill walls" },
-                        { key: "defect_rccCracks", label: "Cracking in RCC components" },
-                      ].map((item) => (
-                        <tr key={item.key}>
-                          <td className="border p-2">{item.label}</td>
-                          <td className="border p-2">
-                            <select
-                              value={formData[item.key] || ""}
-                              onChange={(e) =>
-                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                              }
-                              className="w-full border rounded p-1"
-                            >
-                              <option value="">Select severity</option>
-                              {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                <option key={level} value={level}>{level}</option>
-                              ))}
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
+                        { key: "defect_wallCracks", label: "Cracking in Load-Bearing Walls/Infill Walls" },
+                        { key: "defect_rccCracks", label: "Cracking in RCC Components" },
+                      ].map((item) => {
+                        const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                        const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                        const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                        const color = colors[valueIndex];
+
+                        return (
+                          <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                            <td className="p-4 border">{item.label}</td>
+                            <td className="p-4 border">
+                              <div className="flex items-center gap-4">
+                                {/* Progress Bar Slider */}
+                                <div className="relative w-full">
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="4"
+                                    step="1"
+                                    value={valueIndex}
+                                    onChange={(e) =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        [item.key]: severityLevels[e.target.value]
+                                      }))
+                                    }
+                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                    style={{
+                                      outline: "none",
+                                      WebkitAppearance: "none",
+                                    }}
+                                  />
+                                  {/* Colored Track */}
+                                  <div
+                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                    style={{
+                                      width: `${(valueIndex / 4) * 100}%`,
+                                    }}
+                                  ></div>
+                                </div>
+
+                                {/* Display Selected Value */}
+                                <span
+                                  className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                >
+                                  {severityLevels[valueIndex]}
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+
 
                       {/* Water Seepage Section */}
                       <tr>
@@ -327,29 +361,63 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                         </td>
                       </tr>
                       {[
-                        { key: "defect_waterSeepage", label: "Water seepage" },
+                        { key: "defect_waterSeepage", label: "Water Seepage" },
                         { key: "defect_popOuts", label: "Pop-outs" },
                         { key: "defect_spalling", label: "Spalling" },
-                        { key: "defect_rustStaining", label: "Rust staining" },
-                      ].map((item) => (
-                        <tr key={item.key}>
-                          <td className="border p-2">{item.label}</td>
-                          <td className="border p-2">
-                            <select
-                              value={formData[item.key] || ""}
-                              onChange={(e) =>
-                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                              }
-                              className="w-full border rounded p-1"
-                            >
-                              <option value="">Select severity</option>
-                              {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                <option key={level} value={level}>{level}</option>
-                              ))}
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
+                        { key: "defect_rustStaining", label: "Rust Staining" },
+                      ].map((item) => {
+                        const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                        const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                        const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                        const color = colors[valueIndex];
+
+                        return (
+                          <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                            <td className="p-4 border">{item.label}</td>
+                            <td className="p-4 border">
+                              <div className="flex items-center gap-4">
+                                {/* Progress Bar Slider */}
+                                <div className="relative w-full">
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="4"
+                                    step="1"
+                                    value={valueIndex}
+                                    onChange={(e) =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        [item.key]: severityLevels[e.target.value],
+                                      }))
+                                    }
+                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                    style={{
+                                      outline: "none",
+                                      WebkitAppearance: "none",
+                                    }}
+                                  />
+                                  {/* Colored Track */}
+                                  <div
+                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                    style={{
+                                      width: `${(valueIndex / 4) * 100}%`,
+                                    }}
+                                  ></div>
+                                </div>
+
+                                {/* Display Selected Value */}
+                                <span
+                                  className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                >
+                                  {severityLevels[valueIndex]}
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+
 
                       {/* Extent of Corrosion Section */}
                       <tr>
@@ -362,26 +430,58 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                         { key: "defect_corrosionLateralTies", label: "(b) Corrosion in lateral ties/rings" },
                         { key: "defect_debondingDueToCorrosion", label: "(c) Debonding of surface due to corrosion" },
                         { key: "defect_deflectionBeamsSlabsFloors", label: "(d) Deflection in beams/slabs/floors (Attach separate sheets for details preferably with photographs)" },
-                      ].map((item) => (
-                        <tr key={item.key}>
-                          <td className="border p-2">{item.label}</td>
-                          <td className="border p-2">
-                            <select
-                              value={formData[item.key] || ""}
-                              name={item.key}
-                              onChange={(e) =>
-                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                              }
-                              className="w-full border rounded p-1"
-                            >
-                              <option value="">Select severity</option>
-                              {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                <option key={level} value={level}>{level}</option>
-                              ))}
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
+                      ].map((item) => {
+                        const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                        const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                        const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                        const color = colors[valueIndex];
+
+                        return (
+                          <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                            <td className="p-4 border">{item.label}</td>
+                            <td className="p-4 border">
+                              <div className="flex items-center gap-4">
+                                {/* Progress Bar Slider */}
+                                <div className="relative w-full">
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="4"
+                                    step="1"
+                                    value={valueIndex}
+                                    onChange={(e) =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        [item.key]: severityLevels[e.target.value],
+                                      }))
+                                    }
+                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                    style={{
+                                      outline: "none",
+                                      WebkitAppearance: "none",
+                                    }}
+                                  />
+                                  {/* Colored Track */}
+                                  <div
+                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                    style={{
+                                      width: `${(valueIndex / 4) * 100}%`,
+                                    }}
+                                  ></div>
+                                </div>
+
+                                {/* Display Selected Value */}
+                                <span
+                                  className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                >
+                                  {severityLevels[valueIndex]}
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
 
                       {/* State of Existing Repairs Section */}
                       <tr>
@@ -392,25 +492,59 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                       {[
                         { key: "defect_delaminationDebonding", label: "(a) Delamination/debonding" },
                         { key: "defect_crackingOthers", label: "(b) Cracking Others (specify)" },
-                      ].map((item) => (
-                        <tr key={item.key}>
-                          <td className="border p-2">{item.label}</td>
-                          <td className="border p-2">
-                            <select
-                              value={formData[item.key] || ""}
-                              onChange={(e) =>
-                                setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                              }
-                              className="w-full border rounded p-1"
-                            >
-                              <option value="">Select severity</option>
-                              {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                <option key={level} value={level}>{level}</option>
-                              ))}
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
+                      ].map((item) => {
+                        const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                        const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                        const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                        const color = colors[valueIndex];
+
+                        return (
+                          <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                            <td className="p-4 border">{item.label}</td>
+                            <td className="p-4 border">
+                              <div className="flex items-center gap-4">
+                                {/* Progress Bar Slider */}
+                                <div className="relative w-full">
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="4"
+                                    step="1"
+                                    value={valueIndex}
+                                    onChange={(e) =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        [item.key]: severityLevels[e.target.value],
+                                      }))
+                                    }
+                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                    style={{
+                                      outline: "none",
+                                      WebkitAppearance: "none",
+                                    }}
+                                  />
+                                  {/* Colored Track */}
+                                  <div
+                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                    style={{
+                                      width: `${(valueIndex / 4) * 100}%`,
+                                    }}
+                                  ></div>
+                                </div>
+
+                                {/* Display Selected Value */}
+                                <span
+                                  className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                >
+                                  {severityLevels[valueIndex]}
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+
                     </tbody>
                   </table>
                 </div>

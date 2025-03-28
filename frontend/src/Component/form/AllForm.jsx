@@ -65,7 +65,7 @@ export default function AllForm() {
 
     // Fetch data from API on component mount
     useEffect(() => {
-     
+
 
         fetchForms();
     }, []);
@@ -94,7 +94,7 @@ export default function AllForm() {
             settlements: { ...form.settlements }
         });
         setShowModal(true);
-      
+
         setStep(1);
     };
 
@@ -142,7 +142,7 @@ export default function AllForm() {
         }
     }
 
-  
+
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -202,6 +202,9 @@ export default function AllForm() {
     // `${import.meta.env.VITE_APP_BASE_URL}/api/employee/updateFormById/${id}`,
 
     const handleDelete = async (id) => {
+        const isConfirmed = window.confirm("Are you sure you want to delete this form?");
+
+        if (!isConfirmed) return;
         try {
             await axios.delete(`http://localhost:4100/api/form/deleteFormById/${id}`, {
                 headers: {
@@ -246,7 +249,7 @@ export default function AllForm() {
     const handleCrossClick = () => {
         fetchForms();
         setShowModal(false);
-        setIsVisible(true);   
+        setIsVisible(true);
     }
 
     return (
@@ -310,16 +313,19 @@ export default function AllForm() {
                                             <td className="p-6 flex justify-center">
                                                 <button className="text-blue-500"
                                                     onClick={() => {
-                                                    
-                                                        handleEdit(form)}}
+
+                                                        handleEdit(form)
+                                                    }}
                                                 >
                                                     <AiFillEdit size={20} />
                                                 </button>
-                                                <button className="ml-3 cursor-pointer text-red-600"
-                                                    onClick={() => handleDelete(form.id)}
-                                                >
-                                                    <AiFillDelete size={20} />
-                                                </button>
+                                                {decoded.role === "Admin" && (
+                                                    <button className="ml-3 cursor-pointer text-red-600"
+                                                        onClick={() => handleDelete(form.id)}
+                                                    >
+                                                        <AiFillDelete size={20} />
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))
@@ -352,7 +358,7 @@ export default function AllForm() {
                         <button
                             className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
                             onClick={() => {
-                          handleCrossClick();
+                                handleCrossClick();
 
                             }}
                         >
@@ -471,10 +477,10 @@ export default function AllForm() {
                                                     <thead className="bg-gray-100">
                                                         <tr>
                                                             <th className="border p-2 text-left">Defect Type</th>
-                                                            <th className="border p-2 text-left">Severity</th>
+                                                            <th className="border p-2 text-left max-w-[10px] min-w-[10px]">Severity</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody className="max-w-10px min-w-10px">
                                                         {/* Basic Defects */}
                                                         {[
                                                             { key: "defect_cracking", label: "Cracking" },
@@ -488,7 +494,7 @@ export default function AllForm() {
                                                         ].map((item) => (
                                                             <tr key={item.key}>
                                                                 <td className="border p-2">{item.label}</td>
-                                                                <td className="border p-2">
+                                                                <td className="border p-2 max-w-[100px] min-w-[100px]">
                                                                     <select
                                                                         value={formData[item.key] || ""}
                                                                         onChange={(e) =>
