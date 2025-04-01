@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import { AiFillDelete, AiFillEdit, AiFillPrinter } from "react-icons/ai";
+import { useReactToPrint } from "react-to-print";
 
 export default function AllForm() {
+    const contentRef = useRef(null);
+    const reactToPrintFn = useReactToPrint({
+        contentRef,
+        documentTitle: "Building Condition Assessment",
+    });
     const token = localStorage.getItem("accessToken");
     const decoded = jwtDecode(token);
     const [showModal, setShowModal] = useState(false);
@@ -13,6 +19,8 @@ export default function AllForm() {
     const [editedData, setEditedData] = useState({});
     const [editingIndex, setEditingIndex] = useState(null);
     const [step, setStep] = useState(1);
+    const [printId, setPrintId] = useState("");
+    const [showPrintModal, setShowPrintModal] = useState(false);
 
     const [formData, setFormData] = useState({
         part1GeneralInformation: [],
@@ -65,10 +73,28 @@ export default function AllForm() {
 
     // Fetch data from API on component mount
     useEffect(() => {
-
-
         fetchForms();
     }, []);
+
+    useEffect(() => {
+        if (printId) {
+            purchasePrintFetch();
+        }
+    }, [printId]);
+
+    const purchasePrintFetch = async (id) => {
+        try {
+            const res = await axios.get(`http://localhost:4100/api/form/getFormById/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setFormData(res.data);
+            setShowPrintModal(true);
+        } catch (error) {
+            console.error("Error fetching form:", error);
+            toast.error("Failed to fetch form data.");
+        }
+    };
+
 
     const fetchForms = async () => {
         try {
@@ -83,6 +109,7 @@ export default function AllForm() {
             toast.error("No Form Available");
         }
     };
+
     // Handle Edit Button Click
     const handleEdit = (form) => {
         setSelectedForm(form);
@@ -94,7 +121,6 @@ export default function AllForm() {
             settlements: { ...form.settlements }
         });
         setShowModal(true);
-
         setStep(1);
     };
 
@@ -124,24 +150,6 @@ export default function AllForm() {
             }
         }));
     };
-
-    // Fetch data from API on component mount
-    const handleGetFormData = async (id) => {
-        try {
-            await axios.get(`http://localhost:4100/api/form/getFormById/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            setFormData(prevForms => prevForms.filter(form => form.id !== id));
-            toast.success("Form deleted successfully");
-        } catch (error) {
-            console.error("Error deleting form:", error.message);
-            toast.error("Access Denied: Admins Only");
-        }
-    }
-
 
     // Handle form submission
     const handleSubmit = async (e) => {
@@ -174,6 +182,39 @@ export default function AllForm() {
         }
     };
 
+    const handleDelete = async (id) => {
+        const isConfirmed = window.confirm("Are you sure you want to delete this form?");
+
+        if (!isConfirmed) return;
+        try {
+            await axios.delete(`http://localhost:4100/api/form/deleteFormById/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            setFormData(prevForms => prevForms.filter(form => form.id !== id));
+            toast.success("Form deleted successfully");
+        } catch (error) {
+            console.error("Error deleting form:", error.message);
+            toast.error("Access Denied: Admins Only");
+        }
+    }
+
+    const handleCrossClick = () => {
+        fetchForms();
+        setShowPrintModal(false);
+    }
+
+    const handlePrint = async (id) => {
+        if (id) {
+            await purchasePrintFetch(id);
+        } else {
+            toast.error("Please Retry...");
+        }
+    };
+
+
     // Toggle status between "Inprocess" and "Complete"
     const toggleStatus = async (id, currentStatus) => {
         try {
@@ -199,58 +240,7 @@ export default function AllForm() {
             toast.error("Access Denied: Admins Only");
         }
     };
-    // `${import.meta.env.VITE_APP_BASE_URL}/api/employee/updateFormById/${id}`,
 
-    const handleDelete = async (id) => {
-        const isConfirmed = window.confirm("Are you sure you want to delete this form?");
-
-        if (!isConfirmed) return;
-        try {
-            await axios.delete(`http://localhost:4100/api/form/deleteFormById/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            setFormData(prevForms => prevForms.filter(form => form.id !== id));
-            toast.success("Form deleted successfully");
-        } catch (error) {
-            console.error("Error deleting form:", error.message);
-            toast.error("Access Denied: Admins Only");
-        }
-    }
-
-    // Handle Update Form Submission
-    const handleUpdate = async () => {
-        try {
-            await axios.patch(
-                `http://localhost:4100/api/form/updateFormById/${selectedForm.id}`,
-                editedData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            setFormData((prevForms) =>
-                prevForms.map((form) => (form.id === selectedForm.id ? { ...form, ...editedData } : form))
-            );
-
-            toast.success("Form updated successfully!");
-            setShowModal(false);
-        } catch (error) {
-            console.error("Error updating form:", error.message);
-            toast.error("Error updating form");
-        }
-    };
-
-    const handleCrossClick = () => {
-        fetchForms();
-        setShowModal(false);
-        setIsVisible(true);
-    }
 
     return (
         <>
@@ -267,6 +257,9 @@ export default function AllForm() {
                                     <th className="p-3 border border-gray-300">Created Date</th>
                                     <th className="p-3 border border-gray-300">Last Update</th>
                                     <th className="p-3 border border-gray-300">Status</th>
+                                    {decoded.role === "Admin" && (
+                                        <th className="p-3 border border-gray-300">Approve</th>
+                                    )}
                                     <th className="p-3 border border-gray-300">Actions</th>
                                 </tr>
                             </thead>
@@ -289,27 +282,31 @@ export default function AllForm() {
                                                     ? new Date(form.createdAt).toLocaleDateString("en-GB")
                                                     : "N/A"}
                                             </td>
-                                            {/* <td className="p-3 border border-gray-300">
-                                                <label className="relative inline-flex items-center cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={form.status === "Complete"}
-                                                        onChange={() => toggleStatus(form.id, form.status)}
-                                                        className="sr-only peer"
-                                                    />
-                                                    <div
-                                                        className={`w-11 h-6 rounded-full ${form.status === "Complete"
-                                                            ? "bg-green-500 peer-focus:ring-2 peer-focus:ring-green-300"
-                                                            : "bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300"
-                                                            } transition-all`}
-                                                    ></div>
-                                                    <div
-                                                        className={`absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-transform duration-200 transform ${form.status === "Complete" ? "translate-x-5" : ""
-                                                            }`}
-                                                    ></div>
-                                                </label>
-                                            </td> */}
                                             <td className="p-3 border border-gray-300">{form.status || "N/A"}</td>
+                                            {decoded.role === "Admin" && (
+
+                                                <td className="p-3 border border-gray-300">
+
+                                                    <label className="relative inline-flex items-center cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={form.status === "Complete"}
+                                                            onChange={() => toggleStatus(form.id, form.status)}
+                                                            className="sr-only peer"
+                                                        />
+                                                        <div
+                                                            className={`w-11 h-6 rounded-full ${form.status === "Complete"
+                                                                ? "bg-green-500 peer-focus:ring-2 peer-focus:ring-green-300"
+                                                                : "bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300"
+                                                                } transition-all`}
+                                                        ></div>
+                                                        <div
+                                                            className={`absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-transform duration-200 transform ${form.status === "Complete" ? "translate-x-5" : ""
+                                                                }`}
+                                                        ></div>
+                                                    </label>
+                                                </td>
+                                            )}
                                             <td className="p-6 flex justify-center">
                                                 <button className="text-blue-500"
                                                     onClick={() => {
@@ -326,6 +323,13 @@ export default function AllForm() {
                                                         <AiFillDelete size={20} />
                                                     </button>
                                                 )}
+                                                <button className="ml-3 text-black-500"
+                                                    onClick={() => {
+                                                        handlePrint(form.id);
+                                                    }}
+                                                >
+                                                    <AiFillPrinter size={20} />
+                                                </button>
                                             </td>
                                         </tr>
                                     ))
@@ -355,7 +359,7 @@ export default function AllForm() {
             {showModal && selectedForm && (
                 <div className="fixed inset-0 flex justify-center items-center  bg-gray-50/40 backdrop-blur-sm border shadow-md">
                     <div className="bg-white mt-6 p-6 rounded-md w-full max-h-[95vh] max-w-[75%] flex flex-col">
-                        <button
+                        {/* <button
                             className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
                             onClick={() => {
                                 handleCrossClick();
@@ -365,7 +369,7 @@ export default function AllForm() {
                             <span className="text-red-500 bg-transparent h-6 w-6 text-2xl block outline-none focus:outline-none">
                                 ×
                             </span>
-                        </button>
+                        </button> */}
                         <Toaster position="top-center" />
                         <h2 className="text-xl font-bold text-center mb-4">Building Assessment Form</h2>
                         <h2 className="text-xl font-bold text-center mb-4 uppercase">
@@ -403,7 +407,6 @@ export default function AllForm() {
                                         ))}
                                     </div>
                                 )}
-                                {/* w-96 */}
                                 {/* STEP 2 */}
                                 {step === 2 && (
                                     <div>
@@ -697,6 +700,150 @@ export default function AllForm() {
                     </div>
                 </div>
             )}
+
+            {showPrintModal ? (
+                <>
+                    <div
+                        className="fixed top-0 left-0 z-50 w-full h-screen bg-[#0005] backdrop-blur-sm flex justify-center items-center overflow-y-auto"
+                    >
+                        <div className="absolute top-10 z-50 shadow-lg mx-auto w-full max-w-4xl">
+                            {/* <button
+                                className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                                onClick={() => setShowPrintModal(false)}
+                            >
+                                <span className="text-red-500 bg-transparent  h-6 w-6 text-4xl block outline-none focus:outline-none">
+                                    ×
+                                </span>
+                            </button> */}
+                            <div className="p-6 bg-white" ref={contentRef}>
+                                <div className="bg-white border border-black relative">
+                                    {/* Header */}
+                                    <div className=" border-black">
+                                        <div className="h-14 w-full col-span-1 flex items-center justify-center">
+                                            <h2 className="text-center text-md font-semibold">
+                                                BUILDING CONDITION ASSESSMENT FORM
+                                            </h2>
+                                        </div>
+                                        <div className=" grid grid-cols-2">
+
+
+                                            <div className="p-2 border-t  border-r border-black text-center">
+                                                <p className="text-sm">
+                                                    <strong>Assessed By:</strong> {formData.userName || decoded.name || "N/A"}
+                                                </p>
+                                                <p className="text-sm">
+                                                    <strong>Date:</strong> {new Date(formData.createdAt).toLocaleDateString()}
+                                                </p>
+                                            </div>
+                                            <div className="p-2 border-t border-black text-center">
+                                                <p className="text-sm">
+                                                    <strong>Status:</strong> {formData.status}
+                                                </p>
+                                                <p className="text-sm">
+                                                    <strong>Form ID:</strong> {formData.id}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Part 1: General Information */}
+                                    <div className="p-4 border-t border-black">
+                                        <h3 className="font-bold mb-2">PART 1: GENERAL INFORMATION</h3>
+                                        {formData.part1GeneralInformation && formData.part1GeneralInformation.map((answer, index) => (
+                                            <div key={index} className="mb-4">
+                                                <p className="font-semibold text-sm">{part1Questions[index]}</p>
+                                                <p className="text-sm">{answer || "N/A"}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Part 2: Structural System */}
+                                    <div className="p-4 border-t border-black">
+                                        <h3 className="font-bold mb-2">PART 2: STRUCTURAL SYSTEM</h3>
+                                        {formData.part2StructuralSystem && formData.part2StructuralSystem.map((answer, index) => (
+                                            <div key={index} className="mb-4">
+                                                <p className="font-semibold text-sm">{part2Questions[index]}</p>
+                                                <p className="text-sm">{answer || "N/A"}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Leaning of Building */}
+                                    <div className="p-4 border-t border-black">
+                                        <h3 className="font-bold mb-2">LEANING OF BUILDING</h3>
+                                        <p className="text-sm">{formData.leaningOfBuilding ? "true" : "false"}</p>
+                                    </div>
+
+                                    {/* Settlements */}
+                                    <div className="p-4 border-t border-black">
+                                        <h3 className="font-bold mb-2">SETTLEMENTS</h3>
+                                        <div className="grid grid-cols-3 gap-4">
+                                            <div>
+                                                <p className="font-semibold text-sm">Floor:</p>
+                                                <p className="text-sm">{formData.settlement_floor ? "true" : "false"}</p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-sm">Wall:</p>
+                                                <p className="text-sm">{formData.settlement_wall ? "true" : "false"}</p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-sm">Foundation:</p>
+                                                <p className="text-sm">{formData.settlement_foundation ? "true" : "false"}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Defects */}
+                                    <div className="p-4 border-t border-black">
+                                        <h3 className="font-bold mb-2">DEFECTS OBSERVED</h3>
+                                        <div className="grid grid-cols-3 gap-4">
+                                            {Object.entries(formData).map(([key, value]) => {
+                                                if (key.startsWith('defect_') && value) {
+                                                    const defectName = key.replace('defect_', '').replace(/([A-Z])/g, ' $1').trim();
+                                                    return (
+                                                        <div key={key} className="mb-2">
+                                                            <p className="font-semibold text-sm">{defectName}:</p>
+                                                            <p className="text-sm">{value}</p>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* Overall Condition */}
+                                    <div className="p-4 border-t border-black">
+                                        <h3 className="font-bold mb-2">OVERALL CONDITION</h3>
+                                        <p className="text-sm">{formData.overallCondition || "N/A"}</p>
+                                    </div>
+
+                                    {/* Recommendations */}
+                                    <div className="p-4 border-t border-black">
+                                        <h3 className="font-bold mb-2">RECOMMENDATIONS</h3>
+                                        <p className="text-sm">{formData.recommendation_noActionRequired
+                                            || "N/A"}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-end mt-2">
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 mr-2"
+                                    onClick={() => reactToPrintFn()}
+                                >
+                                    Print
+                                </button>
+                                <button
+                                    className="bg-red-200 text-red-800 px-4 py-2"
+                                    onClick={handleCrossClick}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            ) : null}
         </>
     )
 }

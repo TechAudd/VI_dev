@@ -106,13 +106,10 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
       userName,
       part1GeneralInformation: part1Data,
       part2StructuralSystem: part2Data,
-
-      // flattening data here
       leaningOfBuilding: formData.leaningOfBuilding,
       settlement_floor: formData.settlements.floor,
       settlement_wall: formData.settlements.wall,
       settlement_foundation: formData.settlements.foundation,
-
       defect_cracking: formData?.defect_cracking,
       defect_settlement: formData?.defect_settlement,
       defect_thermalCracking: formData?.defect_thermalCracking,
@@ -132,10 +129,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
       defect_deflectionBeamsSlabsFloors: formData?.defect_deflectionBeamsSlabsFloors,
       defect_delaminationDebonding: formData?.defect_delaminationDebonding,
       defect_crackingOthers: formData?.defect_crackingOthers,
-
       overallCondition: formData?.overallCondition,
-
-      // Add other defect and recommendation fields as needed
       recommendation_noActionRequired: formData.recommendation_noActionRequired || null,
     };
 
@@ -212,7 +206,6 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
               ))}
             </div>
           )}
-          {/* w-96 */}
           {/* STEP 2 */}
           {step === 2 && (
             <div>
