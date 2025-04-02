@@ -33,8 +33,27 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
   const [step, setStep] = useState(1);
   const [part1Data, setPart1Data] = useState(Array(part1Questions.length).fill(""));
   const [part2Data, setPart2Data] = useState(Array(part2Questions.length).fill(""));
+  const [images, setImages] = useState({});
 
   const [formData, setFormData] = useState({
+    //part1
+    part1q_nameOfBuilding: "",
+    part1q_typeOfBuilding: "",
+    part1q_numberOfStories: [],
+    part1q_usageOfStories: [],
+    part1q_TypesOfProff: "",
+    part1q_yearOfConstruction: "",
+
+    //part2
+    part2q_descriptionOfStructuralSystem: "",
+    part2q_descriptionOfSoilCondition: "",
+    part2q_indentificationOfCritical: "",
+    part2q_descriptionOfArea: "",
+    part2q_stateTheExistingUsage: "",
+    part2q_stateTheMisuse: "",
+    part2q_additionalWorks: [],
+
+    // part2 end 
     leaningOfBuilding: null,
     settlements: { floor: null, wall: null, foundation: null },
     defect_cracking: "",
@@ -52,11 +71,11 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
     defect_corrosionLongitudinalBars: "",
     defect_corrosionLateralTies: "",
     defect_debondingDueToCorrosion: "",
-    defect_deflectionBeamsSlabsFloors: "",
+    defect_deflectionBeamsSlabsFloors: [],
     defect_delaminationDebonding: "",
     defect_crackingOthers: "",
     overallCondition: "",
-    recommendations: "",
+    recommendation_noActionRequired: "",
   });
 
   const handlePart1Change = (index, value) => {
@@ -101,59 +120,123 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {
-      userId,
-      userName,
-      part1GeneralInformation: part1Data,
-      part2StructuralSystem: part2Data,
-      leaningOfBuilding: formData.leaningOfBuilding,
-      settlement_floor: formData.settlements.floor,
-      settlement_wall: formData.settlements.wall,
-      settlement_foundation: formData.settlements.foundation,
-      defect_cracking: formData?.defect_cracking,
-      defect_settlement: formData?.defect_settlement,
-      defect_thermalCracking: formData?.defect_thermalCracking,
-      defect_structural: formData?.defect_structural,
-      defect_crazing: formData?.defect_crazing,
-      defect_honeycombing: formData?.defect_honeycombing,
-      defect_wallCracks: formData?.defect_wallCracks,
-      defect_rccCracks: formData?.defect_rccCracks,
-      defect_thermalCracking: formData?.defect_thermalCracking,
-      defect_waterSeepage: formData?.defect_waterSeepage,
-      defect_popOuts: formData?.defect_popOuts,
-      defect_spalling: formData?.defect_spalling,
-      defect_rustStaining: formData?.defect_rustStaining,
-      defect_corrosionLongitudinalBars: formData?.defect_corrosionLongitudinalBars,
-      defect_corrosionLateralTies: formData?.defect_corrosionLateralTies,
-      defect_debondingDueToCorrosion: formData?.defect_debondingDueToCorrosion,
-      defect_deflectionBeamsSlabsFloors: formData?.defect_deflectionBeamsSlabsFloors,
-      defect_delaminationDebonding: formData?.defect_delaminationDebonding,
-      defect_crackingOthers: formData?.defect_crackingOthers,
-      overallCondition: formData?.overallCondition,
-      recommendation_noActionRequired: formData.recommendation_noActionRequired || null,
-    };
-
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("userId", userId);
+      formDataToSend.append("userName", userName);
+
+      formDataToSend.append("part1q_nameOfBuilding", formData.part1q_nameOfBuilding);
+      formDataToSend.append("part1q_typeOfBuilding", formData.part1q_typeOfBuilding);
+      formDataToSend.append("part1q_yearOfConstruction", formData.part1q_yearOfConstruction);
+      formDataToSend.append("part1q_TypesOfProff", JSON.stringify(formData.part1q_TypesOfProff));
+
+      formDataToSend.append("part2q_descriptionOfStructuralSystem", formData.part2q_descriptionOfStructuralSystem);
+      formDataToSend.append("part2q_descriptionOfSoilCondition", formData.part2q_descriptionOfSoilCondition);
+      formDataToSend.append("part2q_indentificationOfCritical", formData.part2q_indentificationOfCritical);
+      formDataToSend.append("part2q_descriptionOfArea", formData.part2q_descriptionOfArea);
+      formDataToSend.append("part2q_stateTheExistingUsage", formData.part2q_stateTheExistingUsage);
+      formDataToSend.append("part2q_stateTheMisuse", formData.part2q_stateTheMisuse);
+      formDataToSend.append("part2q_additionalWorks", JSON.stringify(formData.part2q_additionalWorks));
+      
+      formDataToSend.append("leaningOfBuilding", formData.leaningOfBuilding);
+      formDataToSend.append("settlements", JSON.stringify(formData.settlements));
+      formDataToSend.append("defect_cracking", formData.defect_cracking);
+      formDataToSend.append("defect_settlement", formData.defect_settlement);
+      formDataToSend.append("defect_thermalCracking", formData.defect_thermalCracking);
+      formDataToSend.append("defect_structural", formData.defect_structural);
+      formDataToSend.append("defect_crazing", formData.defect_crazing);
+      formDataToSend.append("defect_honeycombing", formData.defect_honeycombing);
+      formDataToSend.append("defect_wallCracks", formData.defect_wallCracks);
+      formDataToSend.append("defect_rccCracks", formData.defect_rccCracks);
+      formDataToSend.append("defect_waterSeepage", formData.defect_waterSeepage);
+      formDataToSend.append("defect_popOuts", formData.defect_popOuts);
+      formDataToSend.append("defect_spalling", formData.defect_spalling);
+      formDataToSend.append("defect_rustStaining", formData.defect_rustStaining);
+      formDataToSend.append("defect_corrosionLongitudinalBars", formData.defect_corrosionLongitudinalBars);
+      formDataToSend.append("defect_corrosionLateralTies", formData.defect_corrosionLateralTies);
+      formDataToSend.append("defect_debondingDueToCorrosion", formData.defect_debondingDueToCorrosion);
+      formDataToSend.append("defect_deflectionBeamsSlabsFloors", formData.defect_deflectionBeamsSlabsFloors);
+      formDataToSend.append("defect_delaminationDebonding", formData.defect_delaminationDebonding);
+      formDataToSend.append("defect_crackingOthers", formData.defect_crackingOthers);
+      formDataToSend.append("overallCondition", formData.overallCondition);
+      formDataToSend.append("recommendation_noActionRequired", formData.recommendation_noActionRequired);
+
+      const appendArrayToFormData = (key, array) => {
+        array.forEach((item, index) => {
+          Object.keys(item).forEach((field) => {
+            if (field === "images" && item[field]) {
+              item[field].forEach((image, imgIndex) => {
+                formDataToSend.append(`${key}`, image); // Send files correctly
+              });
+            } else {
+              formDataToSend.append(`${key}[${index}][${field}]`, item[field]);
+            }
+          });
+        });
+      };
+
+      if (Array.isArray(formData.part1q_numberOfStories)) {
+        appendArrayToFormData("part1q_numberOfStories", formData.part1q_numberOfStories);
+      }
+      if (Array.isArray(formData.part1q_usageOfStories)) {
+        appendArrayToFormData("part1q_usageOfStories", formData.part1q_usageOfStories);
+      }
+      if (Array.isArray(formData.part2q_additionalWorks)) {
+        appendArrayToFormData("part2q_additionalWorks", formData.part2q_additionalWorks);
+      }
+
+      // Debug FormData
+      for (const pair of formDataToSend.entries()) {
+        console.log(`${pair[0]}:`, pair[1]);
+      }
+
       const response = await axios.post(
         "http://localhost:4100/api/form/createForm",
-        payload,
+        formDataToSend,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
+
       if (response.status === 201) {
-        toast.success(`Form Submitted Successfully!`);
+        toast.success("Form Submitted Successfully!");
         setShowModal(false);
         navigator("/createForm");
         setIsVisible(true);
       }
     } catch (err) {
       console.error(err);
-      alert("Form submission failed.");
+      toast.error("Form submission failed: " + (err.response?.data?.message || err.message));
     }
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+
+  const handleImageChange = (field, files) => {
+    const images = Array.from(files).map((file) => ({
+      file, // Store the File object directly
+      url: URL.createObjectURL(file), // For preview
+    }));
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: prevData[field] ? [...prevData[field], ...images] : [...images],
+    }));
+  };
+
+  const removeImage = (field, index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: prevData[field].filter((_, i) => i !== index),
+    }));
   };
 
   return (
@@ -190,38 +273,185 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
           {/* STEP 1 */}
           {step === 1 && (
             <div>
-
               <h3 className="text-lg font-semibold mb-2">PART 1 GENERAL INFORMATION OF THE BUILDING</h3>
-              {part1Questions.map((q, i) => (
-                <div key={i} className="mb-3">
-                  <label className="block mb-1">{i + 1}. {q}</label>
-                  <textarea
-                    type="text"
-                    className="w-[50%] border rounded p-2"
-                    value={part1Data[i]}
-                    onChange={(e) => handlePart1Change(i, e.target.value)}
-                    required
-                  />
+
+              <div className="mb-3">
+                <label className="block mb-1">1. Name and address of the building, year of construction"</label>
+                <input
+                  type="text"
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part1q_nameOfBuilding}
+                  onChange={(e) => handleInputChange("part1q_nameOfBuilding", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">2. TYPE OF THE BUILDING - Load bearing/party load bearing and partly RCC/RCC frame</label>
+                <input
+                  type="text"
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part1q_typeOfBuilding}
+                  onChange={(e) => handleInputChange("part1q_typeOfBuilding", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">3. Number of stories in each block of the building (Upload Images)</label>
+                <input
+                  type="file"
+                  className="w-[50%] border rounded p-2"
+                  multiple
+                  onChange={(e) => handleImageChange("part1q_numberOfStories", e.target.files)}
+                />
+                <div className="flex flex-wrap mt-2">
+                  {formData.part1q_numberOfStories.map((img, index) => (
+                    <div key={index} className="relative w-24 h-24 m-1">
+                      <img src={img.url} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                      <button
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                        onClick={() => removeImage("part1q_numberOfStories", index)}
+                      >
+                        X
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">{`4. Description of the main usage of the building:\nResidential/education/office/hostel/workshop\n/hospital/any other specify (Upload Images)`}</label>
+                <input
+                  type="file"
+                  className="w-[50%] border rounded p-2"
+                  multiple
+                  onChange={(e) => handleImageChange("part1q_usageOfStories", e.target.files)}
+                />
+                <div className="flex flex-wrap mt-2">
+                  {formData.part1q_usageOfStories.map((img, index) => (
+                    <div key={index} className="relative w-24 h-24 m-1">
+                      <img src={img.url} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                      <button
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                        onClick={() => removeImage("part1q_usageOfStories", index)}
+                      >
+                        X
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="block mb-1">5. TYPE OF FLOOR AND ROOF - RCC/Wooden/steel.    </label>
+                <input
+                  type="text"
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part1q_TypesOfProff}
+                  onChange={(e) => handleInputChange("part1q_TypesOfProff", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">6. Year of construction, Maintenance history of the building if known to be mentioned</label>
+                <input
+                  type="text"
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part1q_yearOfConstruction}
+                  onChange={(e) => handleInputChange("part1q_yearOfConstruction", e.target.value)}
+                  required
+                />
+              </div>
             </div>
           )}
           {/* STEP 2 */}
           {step === 2 && (
             <div>
               <h3 className="text-lg font-semibold mb-2">PART 2 STRUCTURAL SYSTEM OF THE BUILDING</h3>
-              {part2Questions.map((q, i) => (
-                <div key={i} className="mb-3">
-                  <label className="block mb-1">{i + 1}. {q}</label>
-                  <textarea
-                    type="text"
-                    className="w-[50%] border rounded p-2"
-                    value={part2Data[i]}
-                    onChange={(e) => handlePart2Change(i, e.target.value)}
-                    required
-                  />
+
+              <div className="mb-3">
+                <label className="block mb-1">1. Description of the structural forms, systems and materials used in different parts of the building, e.g., RCC, Prestressed concrete, steel, etc.</label>
+                <textarea
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part2q_descriptionOfStructuralSystem}
+                  onChange={(e) => handleInputChange("part2q_descriptionOfStructuralSystem", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">2. Description of soil condition and foundation system, if known</label>
+                <textarea
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part2q_descriptionOfSoilCondition}
+                  onChange={(e) => handleInputChange("part2q_descriptionOfSoilCondition", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">3. Identification of critical structures (e.g., slender columns, floating columns, cantilever structures, long-span structures, etc.)</label>
+                <textarea
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part2q_indentificationOfCritical}
+                  onChange={(e) => handleInputChange("part2q_indentificationOfCritical", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">4. Description of any area not covered in visual inspections. State the reasons for the same.</label>
+                <textarea
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part2q_descriptionOfArea}
+                  onChange={(e) => handleInputChange("part2q_descriptionOfArea", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">5. State, if the existing usage and loading condition is compatible with the intended purpose of the structure</label>
+                <textarea
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part2q_stateTheExistingUsage}
+                  onChange={(e) => handleInputChange("part2q_stateTheExistingUsage", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">6. State the misuse, abuse, or deviation that has given rise to excessive loading</label>
+                <textarea
+                  className="w-[50%] border rounded p-2"
+                  value={formData.part2q_stateTheMisuse}
+                  onChange={(e) => handleInputChange("part2q_stateTheMisuse", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="block mb-1">7. State, if there was any additional/alteration work due to the building structure (Upload Images)</label>
+                <input
+                  type="file"
+                  className="w-[50%] border rounded p-2"
+                  multiple
+                  onChange={(e) => handleImageChange("part2q_additionalWorks", e.target.files)}
+                />
+                <div className="flex flex-wrap mt-2">
+                  {formData.part2q_additionalWorks.map((img, index) => (
+                    <div key={index} className="relative w-24 h-24 m-1">
+                      <img src={img.url} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                      <button
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                        onClick={() => removeImage("part2q_additionalWorks", index)}
+                      >
+                        X
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           )}
 
@@ -422,7 +652,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                         { key: "defect_corrosionLongitudinalBars", label: "(a) Corrosion in longitudinal bars" },
                         { key: "defect_corrosionLateralTies", label: "(b) Corrosion in lateral ties/rings" },
                         { key: "defect_debondingDueToCorrosion", label: "(c) Debonding of surface due to corrosion" },
-                        { key: "defect_deflectionBeamsSlabsFloors", label: "(d) Deflection in beams/slabs/floors (Attach separate sheets for details preferably with photographs)" },
+                        // { key: "defect_deflectionBeamsSlabsFloors", label: "(d) Deflection in beams/slabs/floors (Attach separate sheets for details preferably with photographs)" },
                       ].map((item) => {
                         const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
                         const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
@@ -475,6 +705,33 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                           </tr>
                         );
                       })}
+
+                      <div className="mb-3 p-2">
+                        <label className="block mb-1">(d) Deflection in beams/slabs/floors (Upload Images)</label>
+                        <input
+                          type="file"
+                          className="w-[50%] border rounded p-2"
+                          multiple
+                          accept="image/*"
+                          onChange={(e) => handleImageChange("defect_deflectionBeamsSlabsFloors", e.target.files)}
+                        />
+
+                        {/* Display Uploaded Images */}
+                        <div className="flex flex-wrap mt-2">
+                          {formData.defect_deflectionBeamsSlabsFloors.map((img, index) => (
+                            <div key={index} className="relative w-24 h-24 m-1">
+                              <img src={img.url} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                              <button
+                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                                onClick={() => removeImage("defect_deflectionBeamsSlabsFloors", index)}
+                              >
+                                X
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
 
                       {/* State of Existing Repairs Section */}
                       <tr>

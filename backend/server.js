@@ -7,6 +7,9 @@ const formRoutes = require("./routes/formRoutes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./docs/swagger.json");
 const cookieParser = require("cookie-parser");
+const { cloudinaryConnect } = require('./config/cloudinary');
+const fileUpload = require("express-fileupload");
+
 
 const app = express();
 app.use(cookieParser());
@@ -19,8 +22,12 @@ const corsOptions = {
     allowedHeaders: "Content-Type,Authorization",
 };
 
+cloudinaryConnect();
+
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For URL-encoded data
+app.use(fileUpload({ useTempFiles: true, tempFileDir: "/tmp/" })); // For file uploads
 
 app.use("/api/auth", authRoutes);
 app.use("/api/form", formRoutes);

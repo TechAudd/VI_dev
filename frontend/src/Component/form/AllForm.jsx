@@ -23,8 +23,20 @@ export default function AllForm() {
     const [showPrintModal, setShowPrintModal] = useState(false);
 
     const [formData, setFormData] = useState({
-        part1GeneralInformation: [],
-        part2StructuralSystem: [],
+        part1q_nameOfBuilding: "",
+        part1q_typeOfBuilding: "",
+        part1q_numberOfStories: "",
+        part1q_usageOfStories: "",
+        part1q_TypesOfProff: "",
+        part1q_yearOfConstruction: "",
+
+        part2q_descriptionOfStructuralSystem: "",
+        part2q_descriptionOfSoilCondition: "",
+        part2q_indentificationOfCritical: "",
+        part2q_descriptionOfArea: "",
+        part2q_stateTheExistingUsage: "",
+        part2q_stateTheMisuse: "",
+        part2q_additionalWorks: "",
         leaningOfBuilding: null,
         settlements: { floor: null, wall: null, foundation: null },
         defect_cracking: "",
@@ -103,6 +115,7 @@ export default function AllForm() {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log("Forms fetched successfully", response.data);
             setFormData(response.data);
         } catch (error) {
             console.error("Error fetching forms", error);
@@ -269,7 +282,8 @@ export default function AllForm() {
                                         <tr key={form.id} className="text-center border border-gray-300">
                                             <td className="p-3 border border-gray-300">{index + 1}</td>
                                             <td className="p-3 border border-gray-300">
-                                                {form.part1GeneralInformation?.slice(0, 2).join(", ") || "N/A"}
+                                                {form.part1q_nameOfBuilding || "N/A"},
+                                                {form.part1q_typeOfBuilding || "N/A"}
                                             </td>
                                             <td className="p-3 border border-gray-300">{form.userName || "N/A"}</td>
                                             <td className="p-3 border border-gray-300">
