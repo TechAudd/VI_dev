@@ -25,8 +25,8 @@ export default function AllForm() {
     const [formData, setFormData] = useState({
         part1q_nameOfBuilding: "",
         part1q_typeOfBuilding: "",
-        part1q_numberOfStories: "",
-        part1q_usageOfStories: "",
+        part1q_numberOfStories: [],
+        part1q_usageOfStories: [],
         part1q_TypesOfProff: "",
         part1q_yearOfConstruction: "",
 
@@ -36,7 +36,8 @@ export default function AllForm() {
         part2q_descriptionOfArea: "",
         part2q_stateTheExistingUsage: "",
         part2q_stateTheMisuse: "",
-        part2q_additionalWorks: "",
+        part2q_additionalWorks: [],
+
         leaningOfBuilding: null,
         settlements: { floor: null, wall: null, foundation: null },
         defect_cracking: "",
@@ -54,7 +55,7 @@ export default function AllForm() {
         defect_corrosionLongitudinalBars: "",
         defect_corrosionLateralTies: "",
         defect_debondingDueToCorrosion: "",
-        defect_deflectionBeamsSlabsFloors: "",
+        defect_deflectionBeamsSlabsFloors: [],
         defect_delaminationDebonding: "",
         defect_crackingOthers: "",
         overallCondition: "",
@@ -107,7 +108,6 @@ export default function AllForm() {
         }
     };
 
-
     const fetchForms = async () => {
         try {
             const response = await axios.get("http://localhost:4100/api/form/getAllForms", {
@@ -115,7 +115,6 @@ export default function AllForm() {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log("Forms fetched successfully", response.data);
             setFormData(response.data);
         } catch (error) {
             console.error("Error fetching forms", error);
@@ -227,7 +226,6 @@ export default function AllForm() {
         }
     };
 
-
     // Toggle status between "Inprocess" and "Complete"
     const toggleStatus = async (id, currentStatus) => {
         try {
@@ -253,7 +251,6 @@ export default function AllForm() {
             toast.error("Access Denied: Admins Only");
         }
     };
-
 
     return (
         <>
@@ -714,141 +711,415 @@ export default function AllForm() {
                     </div>
                 </div>
             )}
-
             {showPrintModal ? (
                 <>
-                    <div
-                        className="fixed top-0 left-0 z-50 w-full h-screen bg-[#0005] backdrop-blur-sm flex justify-center items-center overflow-y-auto"
-                    >
+                    <div className="fixed top-0 left-0 z-50 w-full h-screen bg-black/30 backdrop-blur-sm flex justify-center items-start overflow-y-auto">
                         <div className="absolute top-10 z-50 shadow-lg mx-auto w-full max-w-4xl">
-                            {/* <button
-                                className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                onClick={() => setShowPrintModal(false)}
-                            >
-                                <span className="text-red-500 bg-transparent  h-6 w-6 text-4xl block outline-none focus:outline-none">
-                                    ×
-                                </span>
-                            </button> */}
                             <div className="p-6 bg-white" ref={contentRef}>
-                                <div className="bg-white border border-black relative">
+                                <div className="bg-white border border-gray-800 rounded shadow-md">
                                     {/* Header */}
-                                    <div className=" border-black">
-                                        <div className="h-14 w-full col-span-1 flex items-center justify-center">
-                                            <h2 className="text-center text-md font-semibold">
+                                    <div className="border-b-1 border-gray-800 bg-gray-50">
+                                        <div className="h-16 w-full flex items-center justify-center">
+                                            <h2 className="text-center text-xl font-bold text-gray-800">
                                                 BUILDING CONDITION ASSESSMENT FORM
                                             </h2>
                                         </div>
-                                        <div className=" grid grid-cols-2">
-
-
-                                            <div className="p-2 border-t  border-r border-black text-center">
-                                                <p className="text-sm">
-                                                    <strong>Assessed By:</strong> {formData.userName || decoded.name || "N/A"}
+                                        <div className="grid grid-cols-2 divide-x divide-gray-800">
+                                            <div className="p-4 border-t border-gray-800 text-center">
+                                                <p className="text-sm mb-1">
+                                                    <span className="font-semibold">Assessed By:</span> {formData.userName || decoded.name || "N/A"}
                                                 </p>
                                                 <p className="text-sm">
-                                                    <strong>Date:</strong> {new Date(formData.createdAt).toLocaleDateString()}
+                                                    <span className="font-semibold">Date:</span> {new Date(formData.createdAt).toLocaleDateString()}
                                                 </p>
                                             </div>
-                                            <div className="p-2 border-t border-black text-center">
-                                                <p className="text-sm">
-                                                    <strong>Status:</strong> {formData.status}
+                                            <div className="p-4 border-t border-gray-800 text-center">
+                                                <p className="text-sm mb-1">
+                                                    <span className="font-semibold">Status:</span>
+                                                    <span className="ml-1 px-2 py-1 text-xs rounded bg-blue-500 text-white">
+                                                        {formData.status}
+                                                    </span>
                                                 </p>
                                                 <p className="text-sm">
-                                                    <strong>Form ID:</strong> {formData.id}
+                                                    <span className="font-semibold">Form ID:</span> {formData.id}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Part 1: General Information */}
-                                    <div className="p-4 border-t border-black">
-                                        <h3 className="font-bold mb-2">PART 1: GENERAL INFORMATION</h3>
-                                        {formData.part1GeneralInformation && formData.part1GeneralInformation.map((answer, index) => (
-                                            <div key={index} className="mb-4">
-                                                <p className="font-semibold text-sm">{part1Questions[index]}</p>
-                                                <p className="text-sm">{answer || "N/A"}</p>
+                                    <div className="p-5 border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            PART 1: GENERAL INFORMATION
+                                        </h3>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Type of Proof</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_TypesOfProff?.replace(/\"/g, '') || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Name of Building</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_nameOfBuilding || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Number of Stories</p>
+                                            <div className="grid   grid-cols-4 gap-2 mt-2">
+                                                {formData?.part1q_numberOfStories?.map((url, index) => (
+                                                    <div key={`stories-${index}`} className="border border-gray-300 rounded p-2">
+                                                        <img src={url} alt="Building Stories" className="w-full h-24 object-cover rounded" />
+                                                        <p className="mt-1 text-xs text-center text-gray-600">Photo {index + 1}</p>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Type of Building</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_typeOfBuilding || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Usage of Stories</p>
+                                            <div className="grid   grid-cols-4 gap-2 mt-2">
+                                                {formData?.part1q_usageOfStories?.map((url, index) => (
+                                                    <div key={`usage-${index}`} className="border border-gray-300 rounded p-2">
+                                                        <img src={url} alt="Building Stories" className="w-full h-24 object-cover rounded" />
+                                                        <p className="mt-1 text-xs text-center text-gray-600">Photo {index + 1}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Year of Construction</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_yearOfConstruction || "N/A"}</p>
+                                        </div>
                                     </div>
 
                                     {/* Part 2: Structural System */}
-                                    <div className="p-4 border-t border-black">
-                                        <h3 className="font-bold mb-2">PART 2: STRUCTURAL SYSTEM</h3>
-                                        {formData.part2StructuralSystem && formData.part2StructuralSystem.map((answer, index) => (
-                                            <div key={index} className="mb-4">
-                                                <p className="font-semibold text-sm">{part2Questions[index]}</p>
-                                                <p className="text-sm">{answer || "N/A"}</p>
+                                    <div className="p-5 border-t border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            PART 2: STRUCTURAL SYSTEM
+                                        </h3>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Description of Area</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfArea || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Description of Soil Condition</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfSoilCondition || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Description of Structural System</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfStructuralSystem || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Identification of Critical Areas</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_indentificationOfCritical || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">State the Existing Usage</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_stateTheExistingUsage || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">State the Misuse</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_stateTheMisuse || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">Additional Works</p>
+                                            <div className="grid   grid-cols-4 gap-2 mt-2">
+                                                {formData?.part2q_additionalWorks?.map((url, index) => (
+                                                    <div key={`works-${index}`} className="border border-gray-300 rounded p-2">
+                                                        <img src={url} alt="Additional Works" className="w-full h-24 object-cover rounded" />
+                                                        <p className="mt-1 text-xs text-center text-gray-600">Photo {index + 1}</p>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                        </div>
                                     </div>
 
                                     {/* Leaning of Building */}
-                                    <div className="p-4 border-t border-black">
-                                        <h3 className="font-bold mb-2">LEANING OF BUILDING</h3>
-                                        <p className="text-sm">{formData.leaningOfBuilding ? "true" : "false"}</p>
+                                    <div className="p-5 border-t border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            LEANING OF BUILDING
+                                        </h3>
+                                        <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData.leaningOfBuilding ? "bg-red-500" : "bg-green-500"}`}>
+                                            {formData.leaningOfBuilding ? "Yes" : "No"}
+                                        </span>
                                     </div>
 
                                     {/* Settlements */}
-                                    <div className="p-4 border-t border-black">
-                                        <h3 className="font-bold mb-2">SETTLEMENTS</h3>
-                                        <div className="grid grid-cols-3 gap-4">
-                                            <div>
-                                                <p className="font-semibold text-sm">Floor:</p>
-                                                <p className="text-sm">{formData.settlement_floor ? "true" : "false"}</p>
+                                    <div className="p-5 border-t border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            SETTLEMENTS
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-2">Floor:</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData.settlement_floor ? "bg-red-500" : "bg-green-500"}`}>
+                                                    {formData.settlement_floor ? "Yes" : "No"}
+                                                </span>
                                             </div>
-                                            <div>
-                                                <p className="font-semibold text-sm">Wall:</p>
-                                                <p className="text-sm">{formData.settlement_wall ? "true" : "false"}</p>
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-2">Wall:</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData.settlement_wall ? "bg-red-500" : "bg-green-500"}`}>
+                                                    {formData.settlement_wall ? "Yes" : "No"}
+                                                </span>
                                             </div>
-                                            <div>
-                                                <p className="font-semibold text-sm">Foundation:</p>
-                                                <p className="text-sm">{formData.settlement_foundation ? "true" : "false"}</p>
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-2">Foundation:</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData.settlement_foundation ? "bg-red-500" : "bg-green-500"}`}>
+                                                    {formData.settlement_foundation ? "Yes" : "No"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Checklist Table */}
+                                    <div className="p-5 border-t border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            LEAKAGE ASSESSMENT
+                                        </h3>
+
+                                        <div className="mb-4">
+                                            <h4 className="font-semibold text-md mb-2 bg-gray-100 p-2">Negative Side Inputs (5/5)</h4>
+                                            <div className="border border-gray-300 rounded mb-2">
+                                                <div className="grid grid-cols-3 border-b border-gray-300">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage Status on adjacent wall</div>
+                                                    <div className="p-3 bg-gray-500 text-white text-center">Dampness</div>
+                                                </div>
+                                                <div className="grid grid-cols-3 border-b border-gray-300">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage status below floor of the bathroom</div>
+                                                    <div className="p-3 bg-green-500 text-white text-center">No leakage</div>
+                                                </div>
+                                                <div className="grid grid-cols-3 border-b border-gray-300">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage due to concealed Plumbing</div>
+                                                    <div className="p-3 bg-red-500 text-white text-center">Yes</div>
+                                                </div>
+                                                <div className="grid grid-cols-3 border-b border-gray-300">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage due to damage in Nahani Trap/Brick Bat Coba under tile flooring</div>
+                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
+                                                </div>
+                                                <div className="grid grid-cols-3">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage During</div>
+                                                    <div className="p-3 bg-yellow-500 text-white text-center">All time</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <h4 className="font-semibold text-md mb-2 bg-gray-100 p-2">Positive Side Inputs (4/4)</h4>
+                                            <div className="border border-gray-300 rounded mb-2">
+                                                <div className="grid grid-cols-3 border-b border-gray-300">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Gaps/Blackish dirt observed in tile joints</div>
+                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
+                                                </div>
+                                                <div className="grid grid-cols-3 border-b border-gray-300">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Gaps around Nahani Trap Joints</div>
+                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
+                                                </div>
+                                                <div className="grid grid-cols-3 border-b border-gray-300">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Tiles Broken/Loosed anywhere</div>
+                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
+                                                </div>
+                                                <div className="grid grid-cols-3">
+                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Loose Plumbing joints/rust around joints & edges</div>
+                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Defects */}
-                                    <div className="p-4 border-t border-black">
-                                        <h3 className="font-bold mb-2">DEFECTS OBSERVED</h3>
-                                        <div className="grid grid-cols-3 gap-4">
-                                            {Object.entries(formData).map(([key, value]) => {
-                                                if (key.startsWith('defect_') && value) {
-                                                    const defectName = key.replace('defect_', '').replace(/([A-Z])/g, ' $1').trim();
-                                                    return (
-                                                        <div key={key} className="mb-2">
-                                                            <p className="font-semibold text-sm">{defectName}:</p>
-                                                            <p className="text-sm">{value}</p>
-                                                        </div>
-                                                    );
+                                    <div className="p-5 border-t border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            DEFECTS OBSERVED
+                                        </h3>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Corrosion of Lateral Ties</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_corrosionLateralTies === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_corrosionLateralTies || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Corrosion of Longitudinal Bars</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_corrosionLongitudinalBars === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_corrosionLongitudinalBars || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Cracking</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_cracking === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_cracking || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Cracking (Others)</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_crackingOthers === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_crackingOthers || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Crazing</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_crazing === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_crazing || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Debonding Due to Corrosion</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_debondingDueToCorrosion === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_debondingDueToCorrosion || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Delamination/Debonding</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_delaminationDebonding === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_delaminationDebonding || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Honeycombing</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_honeycombing === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_honeycombing || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Pop-Outs</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_popOuts === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_popOuts || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">RCC Cracks</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_rccCracks === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_rccCracks || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Rust Staining</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_rustStaining === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_rustStaining || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Settlement</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_settlement === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_settlement || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Spalling</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_spalling === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_spalling || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Structural Defects</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_structural === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_structural || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Thermal Cracking</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_thermalCracking === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_thermalCracking || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Wall Cracks</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_wallCracks === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_wallCracks || "N/A"}
+                                                </span>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded p-3">
+                                                <p className="font-semibold text-sm text-gray-700 mb-1">Water Seepage</p>
+                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_waterSeepage === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
+                                                    {formData?.defect_waterSeepage || "N/A"}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-6">
+                                            <p className="font-semibold text-sm text-gray-700 mb-2">Deflection in Beams/Slabs/Floors</p>
+                                            <div className="grid   grid-cols-4 gap-2 mt-2">
+                                                {formData?.defect_deflectionBeamsSlabsFloors &&
+                                                    formData.defect_deflectionBeamsSlabsFloors
+                                                        .replace(/[{}]/g, '') // Remove `{}` from the string
+                                                        .split(',') // Split into an array
+                                                        .map((url, index) => (
+                                                            <div key={`deflection-${index}`} className="border border-gray-300 rounded p-2">
+                                                                <img src={url.replace(/"/g, '').trim()} alt="Deflection Issue" className="w-full h-24 object-cover rounded" />
+                                                                <p className="mt-1 text-xs text-center text-gray-600">Photo {index + 1}</p>
+                                                            </div>
+                                                        ))
                                                 }
-                                                return null;
-                                            })}
+                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Overall Condition */}
-                                    <div className="p-4 border-t border-black">
-                                        <h3 className="font-bold mb-2">OVERALL CONDITION</h3>
-                                        <p className="text-sm">{formData.overallCondition || "N/A"}</p>
+                                    <div className="p-5 border-t border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            OVERALL CONDITION
+                                        </h3>
+                                        <span className="px-4 py-2 rounded bg-green-500 text-white font-medium">
+                                            {formData.overallCondition || "N/A"}
+                                        </span>
                                     </div>
 
                                     {/* Recommendations */}
-                                    <div className="p-4 border-t border-black">
-                                        <h3 className="font-bold mb-2">RECOMMENDATIONS</h3>
-                                        <p className="text-sm">{formData.recommendation_noActionRequired
-                                            || "N/A"}</p>
+                                    <div className="p-5 border-t border-gray-800">
+                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
+                                            RECOMMENDATIONS
+                                        </h3>
+                                        <div className="bg-gray-50 p-4 rounded border border-gray-300">
+                                            <p className="text-sm">{formData.recommendation_noActionRequired || "N/A"}</p>
+                                        </div>
+                                    </div>
+                                    <div className="px-5 py-2 border-t border-gray-800">
+                                        <p className="font-bold text-sm mb-4  text-gray-800">
+                                        This is a system-generated print.
+                                        </p>
+                                       
                                     </div>
                                 </div>
                             </div>
-                            <div className="text-end mt-2">
+                            <div className="bg-white p-4 text-right">
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2 mr-2"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded mr-2 font-medium transition-colors"
                                     onClick={() => reactToPrintFn()}
                                 >
                                     Print
                                 </button>
                                 <button
-                                    className="bg-red-200 text-red-800 px-4 py-2"
+                                    className="bg-red-100 hover:bg-red-200 text-red-800 px-6 py-2 rounded font-medium transition-colors"
                                     onClick={handleCrossClick}
                                 >
                                     Cancel

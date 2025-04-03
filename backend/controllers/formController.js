@@ -9,9 +9,6 @@ const extractFiles = (files, keyPrefix) => {
 
 const createForm = async (req, res) => {
     try {
-        console.log("Received request body:", req.body);
-        console.log("Received files:", req.files);
-
         if (!req.body.userId || !req.body.userName) {
             return res.status(400).json({ message: "Missing required user data" });
         }

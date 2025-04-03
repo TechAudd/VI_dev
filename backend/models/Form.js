@@ -24,8 +24,8 @@ const Form = sequelize.define("Form", {
 
   part1q_nameOfBuilding: { type: DataTypes.STRING, allowNull: true },
   part1q_typeOfBuilding: { type: DataTypes.STRING, allowNull: true },
-  part1q_numberOfStories: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true},
-  part1q_usageOfStories: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true},
+  part1q_numberOfStories: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true },
+  part1q_usageOfStories: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true },
   part1q_TypesOfProff: { type: DataTypes.STRING, allowNull: true },
   part1q_yearOfConstruction: { type: DataTypes.STRING, allowNull: true },
 
@@ -35,7 +35,7 @@ const Form = sequelize.define("Form", {
   part2q_descriptionOfArea: { type: DataTypes.STRING, allowNull: true },
   part2q_stateTheExistingUsage: { type: DataTypes.STRING, allowNull: true },
   part2q_stateTheMisuse: { type: DataTypes.STRING, allowNull: true },
-  part2q_additionalWorks: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true},
+  part2q_additionalWorks: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true },
 
   leaningOfBuilding: { type: DataTypes.BOOLEAN, allowNull: true },
   settlement_floor: { type: DataTypes.BOOLEAN, allowNull: true },
@@ -57,7 +57,7 @@ const Form = sequelize.define("Form", {
   defect_corrosionLongitudinalBars: { type: DataTypes.STRING, allowNull: true },
   defect_corrosionLateralTies: { type: DataTypes.STRING, allowNull: true },
   defect_debondingDueToCorrosion: { type: DataTypes.STRING, allowNull: true },
-  defect_deflectionBeamsSlabsFloors: { type: DataTypes.ARRAY(DataTypes.STRING),allowNull: true},
+  defect_deflectionBeamsSlabsFloors: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true },
   defect_delaminationDebonding: { type: DataTypes.STRING, allowNull: true },
   defect_crackingOthers: { type: DataTypes.STRING, allowNull: true },
   overallCondition: { type: DataTypes.STRING, allowNull: true },

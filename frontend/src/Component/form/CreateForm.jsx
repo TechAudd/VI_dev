@@ -78,28 +78,6 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
     recommendation_noActionRequired: "",
   });
 
-  const handlePart1Change = (index, value) => {
-    const updated = [...part1Data];
-    updated[index] = value;
-    setPart1Data(updated);
-  };
-
-  const handlePart2Change = (index, value) => {
-    const updated = [...part2Data];
-    updated[index] = value;
-    setPart2Data(updated);
-  };
-
-  const handleDefectChange = (defectType, severityLevel) => {
-    setFormData(prev => ({
-      ...prev,
-      defects: {
-        ...prev.defects,
-        [defectType]: severityLevel,
-      },
-    }));
-  };
-
   const handleNestedYesNoChange = (parentKey, key, value) => {
     setFormData(prev => ({
       ...prev,
@@ -137,9 +115,12 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
       formDataToSend.append("part2q_stateTheExistingUsage", formData.part2q_stateTheExistingUsage);
       formDataToSend.append("part2q_stateTheMisuse", formData.part2q_stateTheMisuse);
       formDataToSend.append("part2q_additionalWorks", JSON.stringify(formData.part2q_additionalWorks));
-      
+
       formDataToSend.append("leaningOfBuilding", formData.leaningOfBuilding);
-      formDataToSend.append("settlements", JSON.stringify(formData.settlements));
+      formDataToSend.append("settlement_floor", formData.settlements.floor);
+      formDataToSend.append("settlement_wall", formData.settlements.wall);
+      formDataToSend.append("settlement_foundation", formData.settlements.foundation);
+
       formDataToSend.append("defect_cracking", formData.defect_cracking);
       formDataToSend.append("defect_settlement", formData.defect_settlement);
       formDataToSend.append("defect_thermalCracking", formData.defect_thermalCracking);
@@ -166,7 +147,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
           Object.keys(item).forEach((field) => {
             if (field === "images" && item[field]) {
               item[field].forEach((image, imgIndex) => {
-                formDataToSend.append(`${key}`, image); // Send files correctly
+                formDataToSend.append(`${key}`, image); 
               });
             } else {
               formDataToSend.append(`${key}[${index}][${field}]`, item[field]);
@@ -183,6 +164,9 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
       }
       if (Array.isArray(formData.part2q_additionalWorks)) {
         appendArrayToFormData("part2q_additionalWorks", formData.part2q_additionalWorks);
+      }
+      if (Array.isArray(formData.defect_deflectionBeamsSlabsFloors)) {
+        appendArrayToFormData("defect_deflectionBeamsSlabsFloors", formData.defect_deflectionBeamsSlabsFloors);
       }
 
       // Debug FormData
@@ -222,8 +206,8 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
 
   const handleImageChange = (field, files) => {
     const images = Array.from(files).map((file) => ({
-      file, // Store the File object directly
-      url: URL.createObjectURL(file), // For preview
+      file,
+      url: URL.createObjectURL(file), 
     }));
 
     setFormData((prevData) => ({
@@ -575,7 +559,6 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                           </tr>
                         );
                       })}
-
 
                       {/* Water Seepage Section */}
                       <tr>
