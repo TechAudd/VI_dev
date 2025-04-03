@@ -115,6 +115,7 @@ export default function AllForm() {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log("Fetched Forms:", response.data);
             setFormData(response.data);
         } catch (error) {
             console.error("Error fetching forms", error);
@@ -128,25 +129,10 @@ export default function AllForm() {
         // Populate form data with the selected form's data
         setFormData({
             ...form,
-            part1GeneralInformation: [...form.part1GeneralInformation],
-            part2StructuralSystem: [...form.part2StructuralSystem],
             settlements: { ...form.settlements }
         });
         setShowModal(true);
         setStep(1);
-    };
-
-    // Handle form field changes
-    const handlePart1Change = (index, value) => {
-        const updatedPart1 = [...formData.part1GeneralInformation];
-        updatedPart1[index] = value;
-        setFormData(prev => ({ ...prev, part1GeneralInformation: updatedPart1 }));
-    };
-
-    const handlePart2Change = (index, value) => {
-        const updatedPart2 = [...formData.part2StructuralSystem];
-        updatedPart2[index] = value;
-        setFormData(prev => ({ ...prev, part2StructuralSystem: updatedPart2 }));
     };
 
     const handleYesNoChange = (field, value) => {
@@ -251,6 +237,34 @@ export default function AllForm() {
             toast.error("Access Denied: Admins Only");
         }
     };
+
+    const handleInputChange = (field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
+    const handleImageChange = (field, files) => {
+        const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
+
+        setFormData((prev) => ({
+            ...prev,
+            [field]: [...prev[field], ...newImages],
+        }));
+    };
+
+    const removeImage = (field, index) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: prev[field].filter((_, i) => i !== index),
+        }));
+    };
+
+    const handleCloseEditModal = () => {
+        setShowModal(false);
+        fetchForms();
+    }
 
     return (
         <>
@@ -366,21 +380,19 @@ export default function AllForm() {
                     </button>
                 </div>
             </div>
+
             {/* Edit Modal */}
             {showModal && selectedForm && (
                 <div className="fixed inset-0 flex justify-center items-center  bg-gray-50/40 backdrop-blur-sm border shadow-md">
-                    <div className="bg-white mt-6 p-6 rounded-md w-full max-h-[95vh] max-w-[75%] flex flex-col">
-                        {/* <button
+                    <div className="bg-white mt-10 p-6 rounded-md w-full max-h-[95vh] max-w-[75%] flex flex-col">
+                        <button
                             className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                            onClick={() => {
-                                handleCrossClick();
-
-                            }}
+                            onClick={handleCloseEditModal}
                         >
                             <span className="text-red-500 bg-transparent h-6 w-6 text-2xl block outline-none focus:outline-none">
                                 ×
                             </span>
-                        </button> */}
+                        </button>
                         <Toaster position="top-center" />
                         <h2 className="text-xl font-bold text-center mb-4">Building Assessment Form</h2>
                         <h2 className="text-xl font-bold text-center mb-4 uppercase">
@@ -402,38 +414,200 @@ export default function AllForm() {
                                 {/* STEP 1 */}
                                 {step === 1 && (
                                     <div>
-
                                         <h3 className="text-lg font-semibold mb-2">PART 1 GENERAL INFORMATION OF THE BUILDING</h3>
-                                        {part1Questions.map((q, i) => (
-                                            <div key={i} className="mb-3">
-                                                <label className="block mb-1">{i + 1}. {q}</label>
-                                                <textarea
-                                                    type="text"
-                                                    className="w-[50%] border rounded p-2"
-                                                    value={formData.part1GeneralInformation[i] || ""}
-                                                    onChange={(e) => handlePart1Change(i, e.target.value)}
-                                                    required
-                                                />
+
+                                        {/* Name of Building */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">1. Name and address of the building, year of construction</label>
+                                            <input
+                                                type="text"
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part1q_nameOfBuilding || ""}
+                                                onChange={(e) => handleInputChange("part1q_nameOfBuilding", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Type of Building */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">2. TYPE OF THE BUILDING</label>
+                                            <input
+                                                type="text"
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part1q_typeOfBuilding || ""}
+                                                onChange={(e) => handleInputChange("part1q_typeOfBuilding", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Number of Stories - Image Upload */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">3. Number of stories in each block of the building (Upload Images)</label>
+                                            <input
+                                                type="file"
+                                                className="w-[50%] border rounded p-2"
+                                                multiple
+                                                onChange={(e) => handleImageChange("part1q_numberOfStories", e.target.files)}
+                                            />
+                                            <div className="flex flex-wrap mt-2">
+                                                {formData.part1q_numberOfStories?.map((img, index) => (
+                                                    <div key={index} className="relative w-24 h-24 m-1">
+                                                        <img src={img} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                                                        <button
+                                                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                                                            onClick={() => removeImage("part1q_numberOfStories", index)}
+                                                        >
+                                                            X
+                                                        </button>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                        </div>
+
+                                        {/* Usage of Stories - Image Upload */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">4. Description of the main usage of the building (Upload Images)</label>
+                                            <input
+                                                type="file"
+                                                className="w-[50%] border rounded p-2"
+                                                multiple
+                                                onChange={(e) => handleImageChange("part1q_usageOfStories", e.target.files)}
+                                            />
+                                            <div className="flex flex-wrap mt-2">
+                                                {formData.part1q_usageOfStories?.map((img, index) => (
+                                                    <div key={index} className="relative w-24 h-24 m-1">
+                                                        <img src={img} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                                                        <button
+                                                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                                                            onClick={() => removeImage("part1q_usageOfStories", index)}
+                                                        >
+                                                            X
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Types of Roof */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">5. TYPE OF FLOOR AND ROOF</label>
+                                            <input
+                                                type="text"
+                                                className="w-[50%] border rounded p-2"
+                                                value={JSON.parse(formData.part1q_TypesOfProff || '""')}
+                                                onChange={(e) => handleInputChange("part1q_TypesOfProff", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Year of Construction */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">6. Year of construction, Maintenance history of the building</label>
+                                            <input
+                                                type="text"
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part1q_yearOfConstruction || ""}
+                                                onChange={(e) => handleInputChange("part1q_yearOfConstruction", e.target.value)}
+                                                required
+                                            />
+                                        </div>
                                     </div>
                                 )}
+
                                 {/* STEP 2 */}
                                 {step === 2 && (
                                     <div>
                                         <h3 className="text-lg font-semibold mb-2">PART 2 STRUCTURAL SYSTEM OF THE BUILDING</h3>
-                                        {part2Questions.map((q, i) => (
-                                            <div key={i} className="mb-3">
-                                                <label className="block mb-1">{i + 1}. {q}</label>
-                                                <textarea
-                                                    type="text"
-                                                    className="w-[50%] border rounded p-2"
-                                                    value={formData.part2StructuralSystem[i] || ""}
-                                                    onChange={(e) => handlePart2Change(i, e.target.value)}
-                                                    required
-                                                />
+
+                                        {/* Description of Structural System */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">1. Description of the structural forms, systems, and materials used</label>
+                                            <textarea
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part2q_descriptionOfStructuralSystem || ""}
+                                                onChange={(e) => handleInputChange("part2q_descriptionOfStructuralSystem", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Description of Soil Condition */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">2. Description of soil condition and foundation system</label>
+                                            <textarea
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part2q_descriptionOfSoilCondition || ""}
+                                                onChange={(e) => handleInputChange("part2q_descriptionOfSoilCondition", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Identification of Critical Structures */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">3. Identification of critical structures (e.g., slender columns, cantilever structures, etc.)</label>
+                                            <textarea
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part2q_indentificationOfCritical || ""}
+                                                onChange={(e) => handleInputChange("part2q_indentificationOfCritical", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Description of Uninspected Areas */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">4. Description of any area not covered in visual inspections</label>
+                                            <textarea
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part2q_descriptionOfArea || ""}
+                                                onChange={(e) => handleInputChange("part2q_descriptionOfArea", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Compatibility of Usage */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">5. Compatibility of existing usage with intended purpose</label>
+                                            <textarea
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part2q_stateTheExistingUsage || ""}
+                                                onChange={(e) => handleInputChange("part2q_stateTheExistingUsage", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Misuse or Deviations */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">6. Misuse, abuse, or deviations causing excessive loading</label>
+                                            <textarea
+                                                className="w-[50%] border rounded p-2"
+                                                value={formData.part2q_stateTheMisuse || ""}
+                                                onChange={(e) => handleInputChange("part2q_stateTheMisuse", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Additional/Alteration Work - Image Upload */}
+                                        <div className="mb-3">
+                                            <label className="block mb-1">7. Any additional/alteration work done on the building (Upload Images)</label>
+                                            <input
+                                                type="file"
+                                                className="w-[50%] border rounded p-2"
+                                                multiple
+                                                onChange={(e) => handleImageChange("part2q_additionalWorks", e.target.files)}
+                                            />
+                                            <div className="flex flex-wrap mt-2">
+                                                {formData.part2q_additionalWorks?.map((img, index) => (
+                                                    <div key={index} className="relative w-24 h-24 m-1">
+                                                        <img src={img} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                                                        <button
+                                                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                                                            onClick={() => removeImage("part2q_additionalWorks", index)}
+                                                        >
+                                                            X
+                                                        </button>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                        </div>
                                     </div>
                                 )}
 
@@ -711,6 +885,8 @@ export default function AllForm() {
                     </div>
                 </div>
             )}
+
+            {/* Print Modal */}
             {showPrintModal ? (
                 <>
                     <div className="fixed top-0 left-0 z-50 w-full h-screen bg-black/30 backdrop-blur-sm flex justify-center items-start overflow-y-auto">
@@ -1105,9 +1281,9 @@ export default function AllForm() {
                                     </div>
                                     <div className="px-5 py-2 border-t border-gray-800">
                                         <p className="font-bold text-sm mb-4  text-gray-800">
-                                        This is a system-generated print.
+                                            This is a system-generated print.
                                         </p>
-                                       
+
                                     </div>
                                 </div>
                             </div>
