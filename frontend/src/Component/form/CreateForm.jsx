@@ -147,7 +147,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
           Object.keys(item).forEach((field) => {
             if (field === "images" && item[field]) {
               item[field].forEach((image, imgIndex) => {
-                formDataToSend.append(`${key}`, image); 
+                formDataToSend.append(`${key}`, image);
               });
             } else {
               formDataToSend.append(`${key}[${index}][${field}]`, item[field]);
@@ -207,7 +207,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
   const handleImageChange = (field, files) => {
     const images = Array.from(files).map((file) => ({
       file,
-      url: URL.createObjectURL(file), 
+      url: URL.createObjectURL(file),
     }));
 
     setFormData((prevData) => ({
@@ -260,7 +260,7 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
               <h3 className="text-lg font-semibold mb-2">PART 1 GENERAL INFORMATION OF THE BUILDING</h3>
 
               <div className="mb-3">
-                <label className="block mb-1">1. Name and address of the building, year of construction"</label>
+                <label className="block mb-1">1. Name and address of the building, year of construction</label>
                 <input
                   type="text"
                   className="w-[50%] border rounded p-2"
@@ -777,7 +777,6 @@ export default function CreateForm({ setIsVisible, setShowModal }) {
                           </tr>
                         );
                       })}
-
                     </tbody>
                   </table>
                 </div>

@@ -115,7 +115,6 @@ export default function AllForm() {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log("Fetched Forms:", response.data);
             setFormData(response.data);
         } catch (error) {
             console.error("Error fetching forms", error);
@@ -182,7 +181,6 @@ export default function AllForm() {
 
     const handleDelete = async (id) => {
         const isConfirmed = window.confirm("Are you sure you want to delete this form?");
-
         if (!isConfirmed) return;
         try {
             await axios.delete(`http://localhost:4100/api/form/deleteFormById/${id}`, {
@@ -212,7 +210,6 @@ export default function AllForm() {
         }
     };
 
-    // Toggle status between "Inprocess" and "Complete"
     const toggleStatus = async (id, currentStatus) => {
         try {
             const newStatus = currentStatus === "Inprocess" ? "Complete" : "Inprocess";
@@ -230,7 +227,6 @@ export default function AllForm() {
                 )
             );
             fetchForms();
-
             toast.success(`Status updated to ${newStatus}`);
         } catch (error) {
             console.error("Error updating form status:", error.message);
@@ -247,7 +243,6 @@ export default function AllForm() {
 
     const handleImageChange = (field, files) => {
         const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
-
         setFormData((prev) => ({
             ...prev,
             [field]: [...prev[field], ...newImages],
@@ -265,6 +260,21 @@ export default function AllForm() {
         setShowModal(false);
         fetchForms();
     }
+
+    const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+    const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+    const getSeverityColor = (severity) => {
+        const index = severityLevels.indexOf(severity);
+        return index !== -1 ? colors[index] : "bg-gray-300";
+    };
+
+    const updatedDate = new Date(formData.updatedAt);
+    const formattedDate = updatedDate.toLocaleDateString("en-GB");
+    const formattedTime = updatedDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
 
     return (
         <>
@@ -926,21 +936,21 @@ export default function AllForm() {
                                     {/* Part 1: General Information */}
                                     <div className="p-5 border-gray-800">
                                         <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            PART 1: GENERAL INFORMATION
+                                            PART 1 GENERAL INFORMATION OF THE BUILDING
                                         </h3>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Type of Proof</p>
-                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_TypesOfProff?.replace(/\"/g, '') || "N/A"}</p>
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Name of Building</p>
+                                            <p className="font-semibold text-sm text-gray-700">1. Name and address of the building, year of construction</p>
                                             <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_nameOfBuilding || "N/A"}</p>
                                         </div>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Number of Stories</p>
+                                            <p className="font-semibold text-sm text-gray-700">2. TYPE OF THE BUILDING - Load bearing/party load bearing and partly RCC/RCC frame</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_typeOfBuilding || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">3. Number of stories in each block of the building (Upload Images)</p>
                                             <div className="grid   grid-cols-4 gap-2 mt-2">
                                                 {formData?.part1q_numberOfStories?.map((url, index) => (
                                                     <div key={`stories-${index}`} className="border border-gray-300 rounded p-2">
@@ -952,12 +962,7 @@ export default function AllForm() {
                                         </div>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Type of Building</p>
-                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_typeOfBuilding || "N/A"}</p>
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Usage of Stories</p>
+                                            <p className="font-semibold text-sm text-gray-700">4. Description of the main usage of the building:\nResidential/education/office/hostel/workshop\n/hospital/any other specify (Upload Images)</p>
                                             <div className="grid   grid-cols-4 gap-2 mt-2">
                                                 {formData?.part1q_usageOfStories?.map((url, index) => (
                                                     <div key={`usage-${index}`} className="border border-gray-300 rounded p-2">
@@ -969,7 +974,12 @@ export default function AllForm() {
                                         </div>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Year of Construction</p>
+                                            <p className="font-semibold text-sm text-gray-700">5. TYPE OF FLOOR AND ROOF - RCC/Wooden/steel</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_TypesOfProff?.replace(/\"/g, '') || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">6. Year of construction, Maintenance history of the building if known to be mentioned</p>
                                             <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part1q_yearOfConstruction || "N/A"}</p>
                                         </div>
                                     </div>
@@ -977,41 +987,41 @@ export default function AllForm() {
                                     {/* Part 2: Structural System */}
                                     <div className="p-5 border-t border-gray-800">
                                         <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            PART 2: STRUCTURAL SYSTEM
+                                            PART 2 STRUCTURAL SYSTEM OF THE BUILDING
                                         </h3>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Description of Area</p>
-                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfArea || "N/A"}</p>
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Description of Soil Condition</p>
-                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfSoilCondition || "N/A"}</p>
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Description of Structural System</p>
+                                            <p className="font-semibold text-sm text-gray-700">1. Description of the structural forms, systems and materials used in different parts of the building, e.g., RCC, Prestressed concrete, steel, etc.</p>
                                             <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfStructuralSystem || "N/A"}</p>
                                         </div>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Identification of Critical Areas</p>
+                                            <p className="font-semibold text-sm text-gray-700">2. Description of soil condition and foundation system, if known</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfSoilCondition || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">3. Identification of critical structures (e.g., slender columns, floating columns, cantilever structures, long-span structures, etc.)</p>
                                             <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_indentificationOfCritical || "N/A"}</p>
                                         </div>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">State the Existing Usage</p>
+                                            <p className="font-semibold text-sm text-gray-700">4. Description of any area not covered in visual inspections. State the reasons for the same.</p>
+                                            <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_descriptionOfArea || "N/A"}</p>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <p className="font-semibold text-sm text-gray-700">5. State, if the existing usage and loading condition is compatible with the intended purpose of the structure</p>
                                             <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_stateTheExistingUsage || "N/A"}</p>
                                         </div>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">State the Misuse</p>
+                                            <p className="font-semibold text-sm text-gray-700">6. State the misuse, abuse, or deviation that has given rise to excessive loading</p>
                                             <p className="text-sm bg-gray-50 p-2 rounded mt-1">{formData?.part2q_stateTheMisuse || "N/A"}</p>
                                         </div>
 
                                         <div className="mb-4">
-                                            <p className="font-semibold text-sm text-gray-700">Additional Works</p>
+                                            <p className="font-semibold text-sm text-gray-700">7. State, if there was any additional/alteration work due to the building structure (Upload Images)</p>
                                             <div className="grid   grid-cols-4 gap-2 mt-2">
                                                 {formData?.part2q_additionalWorks?.map((url, index) => (
                                                     <div key={`works-${index}`} className="border border-gray-300 rounded p-2">
@@ -1024,9 +1034,10 @@ export default function AllForm() {
                                     </div>
 
                                     {/* Leaning of Building */}
+
                                     <div className="p-5 border-t border-gray-800">
                                         <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            LEANING OF BUILDING
+                                            1. Leaning of Building
                                         </h3>
                                         <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData.leaningOfBuilding ? "bg-red-500" : "bg-green-500"}`}>
                                             {formData.leaningOfBuilding ? "Yes" : "No"}
@@ -1036,7 +1047,7 @@ export default function AllForm() {
                                     {/* Settlements */}
                                     <div className="p-5 border-t border-gray-800">
                                         <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            SETTLEMENTS
+                                            2. Settlements
                                         </h3>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div className="border border-gray-200 rounded p-3">
@@ -1046,13 +1057,13 @@ export default function AllForm() {
                                                 </span>
                                             </div>
                                             <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-2">Wall:</p>
+                                                <p className="font-semibold text-sm text-gray-700 mb-2">Settlement of load-bearing wall:</p>
                                                 <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData.settlement_wall ? "bg-red-500" : "bg-green-500"}`}>
                                                     {formData.settlement_wall ? "Yes" : "No"}
                                                 </span>
                                             </div>
                                             <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-2">Foundation:</p>
+                                                <p className="font-semibold text-sm text-gray-700 mb-2">Settlement of RCC Foundation:</p>
                                                 <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData.settlement_foundation ? "bg-red-500" : "bg-green-500"}`}>
                                                     {formData.settlement_foundation ? "Yes" : "No"}
                                                 </span>
@@ -1060,186 +1071,41 @@ export default function AllForm() {
                                         </div>
                                     </div>
 
-                                    {/* Checklist Table */}
-                                    <div className="p-5 border-t border-gray-800">
-                                        <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            LEAKAGE ASSESSMENT
-                                        </h3>
-
-                                        <div className="mb-4">
-                                            <h4 className="font-semibold text-md mb-2 bg-gray-100 p-2">Negative Side Inputs (5/5)</h4>
-                                            <div className="border border-gray-300 rounded mb-2">
-                                                <div className="grid grid-cols-3 border-b border-gray-300">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage Status on adjacent wall</div>
-                                                    <div className="p-3 bg-gray-500 text-white text-center">Dampness</div>
-                                                </div>
-                                                <div className="grid grid-cols-3 border-b border-gray-300">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage status below floor of the bathroom</div>
-                                                    <div className="p-3 bg-green-500 text-white text-center">No leakage</div>
-                                                </div>
-                                                <div className="grid grid-cols-3 border-b border-gray-300">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage due to concealed Plumbing</div>
-                                                    <div className="p-3 bg-red-500 text-white text-center">Yes</div>
-                                                </div>
-                                                <div className="grid grid-cols-3 border-b border-gray-300">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage due to damage in Nahani Trap/Brick Bat Coba under tile flooring</div>
-                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
-                                                </div>
-                                                <div className="grid grid-cols-3">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Leakage During</div>
-                                                    <div className="p-3 bg-yellow-500 text-white text-center">All time</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <h4 className="font-semibold text-md mb-2 bg-gray-100 p-2">Positive Side Inputs (4/4)</h4>
-                                            <div className="border border-gray-300 rounded mb-2">
-                                                <div className="grid grid-cols-3 border-b border-gray-300">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Gaps/Blackish dirt observed in tile joints</div>
-                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
-                                                </div>
-                                                <div className="grid grid-cols-3 border-b border-gray-300">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Gaps around Nahani Trap Joints</div>
-                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
-                                                </div>
-                                                <div className="grid grid-cols-3 border-b border-gray-300">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Tiles Broken/Loosed anywhere</div>
-                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
-                                                </div>
-                                                <div className="grid grid-cols-3">
-                                                    <div className="col-span-2 p-3 border-r border-gray-300 font-semibold">Loose Plumbing joints/rust around joints & edges</div>
-                                                    <div className="p-3 bg-green-500 text-white text-center">No</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     {/* Defects */}
                                     <div className="p-5 border-t border-gray-800">
                                         <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            DEFECTS OBSERVED
+                                            3. Defects (Extent of defect)
                                         </h3>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Corrosion of Lateral Ties</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_corrosionLateralTies === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_corrosionLateralTies || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Corrosion of Longitudinal Bars</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_corrosionLongitudinalBars === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_corrosionLongitudinalBars || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Cracking</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_cracking === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_cracking || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Cracking (Others)</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_crackingOthers === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_crackingOthers || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Crazing</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_crazing === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_crazing || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Debonding Due to Corrosion</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_debondingDueToCorrosion === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_debondingDueToCorrosion || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Delamination/Debonding</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_delaminationDebonding === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_delaminationDebonding || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Honeycombing</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_honeycombing === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_honeycombing || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Pop-Outs</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_popOuts === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_popOuts || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">RCC Cracks</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_rccCracks === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_rccCracks || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Rust Staining</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_rustStaining === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_rustStaining || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Settlement</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_settlement === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_settlement || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Spalling</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_spalling === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_spalling || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Structural Defects</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_structural === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_structural || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Thermal Cracking</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_thermalCracking === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_thermalCracking || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Wall Cracks</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_wallCracks === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_wallCracks || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="border border-gray-200 rounded p-3">
-                                                <p className="font-semibold text-sm text-gray-700 mb-1">Water Seepage</p>
-                                                <span className={`px-3 py-1 rounded text-white text-sm font-medium ${formData?.defect_waterSeepage === "Very Severe" ? "bg-red-600" : "bg-orange-500"}`}>
-                                                    {formData?.defect_waterSeepage || "N/A"}
-                                                </span>
-                                            </div>
+                                        <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                                            {[
+                                                { label: "Cracking", key: "defect_cracking" },
+                                                { label: "Settlement", key: "defect_settlement" },
+                                                { label: "Thermal Cracking", key: "defect_thermalCracking" },
+                                                { label: "Structural", key: "defect_structural" },
+                                                { label: "Crazing", key: "defect_crazing" },
+                                                { label: "Honeycombing", key: "defect_honeycombing" },
+                                                { label: "Cracking in Load-Bearing Walls/Infill Walls", key: "defect_wallCracks" },
+                                                { label: "Cracking in RCC Components", key: "defect_rccCracks" },
+                                                { label: "Water Seepage", key: "defect_waterSeepage" },
+                                                { label: "Pop-Outs", key: "defect_popOuts" },
+                                                { label: "Spalling", key: "defect_spalling" },
+                                                { label: "Rust Staining", key: "defect_rustStaining" },
+                                                { label: "Corrosion of Longitudinal Bars", key: "defect_corrosionLongitudinalBars" },
+                                                { label: "Corrosion in lateral ties/rings", key: "defect_corrosionLateralTies" },
+                                                { label: "Debonding of surface due to corrosion", key: "defect_debondingDueToCorrosion" },
+                                                { label: "Delamination/Debonding", key: "defect_delaminationDebonding" },
+                                                { label: "Cracking Others (specify)", key: "defect_crackingOthers" },
+                                            ].map(({ label, key }) => {
+                                                const severity = formData?.[key] || "N/A";
+                                                return (
+                                                    <div key={key} className="border border-gray-200 rounded p-3">
+                                                        <p className="font-semibold text-sm text-gray-700 mb-1">{label}</p>
+                                                        <span className={`px-3 py-1 rounded text-white text-sm font-medium ${getSeverityColor(severity)}`}>
+                                                            {severity}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
 
                                         <div className="mt-6">
@@ -1247,8 +1113,8 @@ export default function AllForm() {
                                             <div className="grid   grid-cols-4 gap-2 mt-2">
                                                 {formData?.defect_deflectionBeamsSlabsFloors &&
                                                     formData.defect_deflectionBeamsSlabsFloors
-                                                        .replace(/[{}]/g, '') // Remove `{}` from the string
-                                                        .split(',') // Split into an array
+                                                        .replace(/[{}]/g, '')
+                                                        .split(',')
                                                         .map((url, index) => (
                                                             <div key={`deflection-${index}`} className="border border-gray-300 rounded p-2">
                                                                 <img src={url.replace(/"/g, '').trim()} alt="Deflection Issue" className="w-full h-24 object-cover rounded" />
@@ -1263,7 +1129,7 @@ export default function AllForm() {
                                     {/* Overall Condition */}
                                     <div className="p-5 border-t border-gray-800">
                                         <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            OVERALL CONDITION
+                                            4. Overall Structural Condition Assessment
                                         </h3>
                                         <span className="px-4 py-2 rounded bg-green-500 text-white font-medium">
                                             {formData.overallCondition || "N/A"}
@@ -1273,18 +1139,33 @@ export default function AllForm() {
                                     {/* Recommendations */}
                                     <div className="p-5 border-t border-gray-800">
                                         <h3 className="font-bold text-lg mb-4 pb-2 border-b border-gray-300 text-gray-800">
-                                            RECOMMENDATIONS
+                                            5. RECOMMENDATIONS
                                         </h3>
                                         <div className="bg-gray-50 p-4 rounded border border-gray-300">
                                             <p className="text-sm">{formData.recommendation_noActionRequired || "N/A"}</p>
                                         </div>
                                     </div>
-                                    <div className="px-5 py-2 border-t border-gray-800">
-                                        <p className="font-bold text-sm mb-4  text-gray-800">
-                                            This is a system-generated print.
-                                        </p>
-
-                                    </div>
+                                    {formData.status === "Complete" && (
+                                        <div className="grid grid-cols-2 divide-x divide-gray-800">
+                                            <div className="p-4 border-t border-gray-800 text-left">
+                                                <p className="font-bold text-sm mb-4 text-gray-800">
+                                                    This is a system-generated printout. No signature is required.
+                                                </p>
+                                            </div>
+                                            <div className="p-4 border-t border-gray-800 text-left">
+                                                <p className="text-sm mb-1">
+                                                    <span className="font-semibold">Date:</span>
+                                                    <span className="ml-1">
+                                                        {formattedDate}
+                                                    </span>
+                                                </p>
+                                                <p className="text-sm">
+                                                    <span className="font-semibold">Time:</span>
+                                                    <span className="ml-1">{formattedTime}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="bg-white p-4 text-right">
