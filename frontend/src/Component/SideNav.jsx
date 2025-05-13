@@ -1,12 +1,13 @@
 import { BiLocationPlus } from "react-icons/bi";
 import { FiMenu } from "react-icons/fi";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SideNav = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Handle screen resize
   useEffect(() => {
@@ -16,6 +17,21 @@ const SideNav = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Function to handle link clicks in mobile view
+  const handleFormClick = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+
+    // First navigate to the form
+    navigate("/createForm");
+
+    // Then close the sidebar after a small delay
+    setTimeout(() => {
+      if (isMobile) {
+        setIsOpen(false);
+      }
+    }, 100);
+  };
 
   return (
     <>
@@ -31,27 +47,31 @@ const SideNav = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen bg-gray-900 text-white shadow-lg transition-all duration-300 mt-16
-          ${isMobile ? (isOpen ? "w-40" : "w-0") : isCollapsed ? "w-16" : "w-40"}
+        className={`fixed top-0 left-0 h-screen bg-gray-900 text-white shadow-lg transition-all duration-300 mt-16 z-40
+          ${isMobile ? (isOpen ? "w-40" : "w-0") : isCollapsed ? "w-16" : "w-40"
+          }
           ${isMobile ? (isOpen ? "block" : "hidden") : "flex flex-col"}`}
         onMouseEnter={() => !isMobile && setIsCollapsed(false)}
         onMouseLeave={() => !isMobile && setIsCollapsed(true)}
       >
-        <nav className=" mt-4 flex-1">
+        <nav className="mt-4 flex-1">
           <ul className="space-y-2">
             <li>
-              <Link
-                to="/createForm"
+              <a
+                href="/createForm"
                 className="py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-gray-300 flex items-center"
+                onClick={handleFormClick}
               >
                 <BiLocationPlus size={25} />
                 <span
-                  className={`transition-all duration-300 ${isCollapsed && !isMobile ? "opacity-0 w-0" : "opacity-100 w-auto"
+                  className={`transition-all duration-300 ${isCollapsed && !isMobile
+                      ? "opacity-0 w-0"
+                      : "opacity-100 w-auto"
                     } whitespace-nowrap ml-2`}
                 >
                   ADD FORM
                 </span>
-              </Link>
+              </a>
             </li>
           </ul>
         </nav>
@@ -60,7 +80,7 @@ const SideNav = () => {
       {/* Overlay (Click outside to close on mobile) */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50"
+          className="fixed inset-0 bg-black opacity-50 z-30"
           onClick={() => setIsOpen(false)}
         />
       )}

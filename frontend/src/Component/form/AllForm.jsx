@@ -668,7 +668,8 @@ export default function AllForm() {
                                         </div>
 
                                         {/* 3. Defects Table */}
-                                        <div>
+                                                                           {/* 3. Defects Table */}
+                                                                           <div>
                                             <label className="block font-semibold text-gray-700 mb-2">3. Defects (Extent of defect)</label>
                                             <div className="overflow-auto border border-gray-300 rounded">
                                                 <table className="w-full text-sm">
@@ -678,7 +679,7 @@ export default function AllForm() {
                                                             <th className="border p-2 text-left max-w-[10px] min-w-[10px]">Severity</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody className="max-w-10px min-w-10px">
+                                                    <tbody>
                                                         {/* Basic Defects */}
                                                         {[
                                                             { key: "defect_cracking", label: "Cracking" },
@@ -689,25 +690,55 @@ export default function AllForm() {
                                                             { key: "defect_honeycombing", label: "Honeycombing" },
                                                             { key: "defect_wallCracks", label: "Cracking in load-bearing walls/ Infill walls" },
                                                             { key: "defect_rccCracks", label: "Cracking in RCC components" },
-                                                        ].map((item) => (
-                                                            <tr key={item.key}>
-                                                                <td className="border p-2">{item.label}</td>
-                                                                <td className="border p-2 max-w-[100px] min-w-[100px]">
-                                                                    <select
-                                                                        value={formData[item.key] || ""}
-                                                                        onChange={(e) =>
-                                                                            setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                                                                        }
-                                                                        className="w-full border rounded p-1"
-                                                                    >
-                                                                        <option value="">Select severity</option>
-                                                                        {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                                                            <option key={level} value={level}>{level}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
+                                                        ].map((item) => {
+                                                            const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                                                            const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                                                            const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                                                            const color = colors[valueIndex];
+                                                            return (
+                                                                <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                                                                    <td className="border p-4">{item.label}</td>
+                                                                    <td className="border p-4">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <div className="relative w-full">
+                                                                                <input
+                                                                                    type="range"
+                                                                                    min="0"
+                                                                                    max="4"
+                                                                                    step="1"
+                                                                                    value={valueIndex}
+                                                                                    onChange={(e) =>
+                                                                                        setFormData((prev) => ({
+                                                                                            ...prev,
+                                                                                            [item.key]: severityLevels[e.target.value]
+                                                                                        }))
+                                                                                    }
+                                                                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                                                                    style={{
+                                                                                        outline: "none",
+                                                                                        WebkitAppearance: "none",
+                                                                                    }}
+                                                                                />
+                                                                                {/* Colored Track */}
+                                                                                <div
+                                                                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                                                                    style={{
+                                                                                        width: `${(valueIndex / 4) * 100}%`,
+                                                                                    }}
+                                                                                ></div>
+                                                                            </div>
+                                                                            {/* Display Selected Value */}
+                                                                            <span
+                                                                                className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                                                            >
+                                                                                {severityLevels[valueIndex]}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })}
 
                                                         {/* Water Seepage Section */}
                                                         <tr>
@@ -720,25 +751,55 @@ export default function AllForm() {
                                                             { key: "defect_popOuts", label: "Pop-outs" },
                                                             { key: "defect_spalling", label: "Spalling" },
                                                             { key: "defect_rustStaining", label: "Rust staining" },
-                                                        ].map((item) => (
-                                                            <tr key={item.key}>
-                                                                <td className="border p-2">{item.label}</td>
-                                                                <td className="border p-2">
-                                                                    <select
-                                                                        value={formData[item.key] || ""}
-                                                                        onChange={(e) =>
-                                                                            setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                                                                        }
-                                                                        className="w-full border rounded p-1"
-                                                                    >
-                                                                        <option value="">Select severity</option>
-                                                                        {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                                                            <option key={level} value={level}>{level}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
+                                                        ].map((item) => {
+                                                            const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                                                            const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                                                            const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                                                            const color = colors[valueIndex];
+                                                            return (
+                                                                <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                                                                    <td className="border p-4">{item.label}</td>
+                                                                    <td className="border p-4">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <div className="relative w-full">
+                                                                                <input
+                                                                                    type="range"
+                                                                                    min="0"
+                                                                                    max="4"
+                                                                                    step="1"
+                                                                                    value={valueIndex}
+                                                                                    onChange={(e) =>
+                                                                                        setFormData((prev) => ({
+                                                                                            ...prev,
+                                                                                            [item.key]: severityLevels[e.target.value]
+                                                                                        }))
+                                                                                    }
+                                                                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                                                                    style={{
+                                                                                        outline: "none",
+                                                                                        WebkitAppearance: "none",
+                                                                                    }}
+                                                                                />
+                                                                                {/* Colored Track */}
+                                                                                <div
+                                                                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                                                                    style={{
+                                                                                        width: `${(valueIndex / 4) * 100}%`,
+                                                                                    }}
+                                                                                ></div>
+                                                                            </div>
+                                                                            {/* Display Selected Value */}
+                                                                            <span
+                                                                                className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                                                            >
+                                                                                {severityLevels[valueIndex]}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })}
 
                                                         {/* Extent of Corrosion Section */}
                                                         <tr>
@@ -751,26 +812,78 @@ export default function AllForm() {
                                                             { key: "defect_corrosionLateralTies", label: "(b) Corrosion in lateral ties/rings" },
                                                             { key: "defect_debondingDueToCorrosion", label: "(c) Debonding of surface due to corrosion" },
                                                             { key: "defect_deflectionBeamsSlabsFloors", label: "(d) Deflection in beams/slabs/floors (Attach separate sheets for details preferably with photographs)" },
-                                                        ].map((item) => (
-                                                            <tr key={item.key}>
-                                                                <td className="border p-2">{item.label}</td>
-                                                                <td className="border p-2">
-                                                                    <select
-                                                                        value={formData[item.key] || ""}
-                                                                        name={item.key}
-                                                                        onChange={(e) =>
-                                                                            setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                                                                        }
-                                                                        className="w-full border rounded p-1"
-                                                                    >
-                                                                        <option value="">Select severity</option>
-                                                                        {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                                                            <option key={level} value={level}>{level}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
+                                                        ].map((item) => {
+                                                            const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                                                            const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                                                            const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                                                            const color = colors[valueIndex];
+                                                            return (
+                                                                <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                                                                    <td className="border p-4">{item.label}</td>
+                                                                    <td className="border p-4">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <div className="relative w-full">
+                                                                                <input
+                                                                                    type="range"
+                                                                                    min="0"
+                                                                                    max="4"
+                                                                                    step="1"
+                                                                                    value={valueIndex}
+                                                                                    onChange={(e) =>
+                                                                                        setFormData((prev) => ({
+                                                                                            ...prev,
+                                                                                            [item.key]: severityLevels[e.target.value]
+                                                                                        }))
+                                                                                    }
+                                                                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                                                                    style={{
+                                                                                        outline: "none",
+                                                                                        WebkitAppearance: "none",
+                                                                                    }}
+                                                                                />
+                                                                                {/* Colored Track */}
+                                                                                <div
+                                                                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                                                                    style={{
+                                                                                        width: `${(valueIndex / 4) * 100}%`,
+                                                                                    }}
+                                                                                ></div>
+                                                                            </div>
+                                                                            {/* Display Selected Value */}
+                                                                            <span
+                                                                                className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                                                            >
+                                                                                {severityLevels[valueIndex]}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })}
+
+                                                        <div className="mb-3">
+                                                            <label className="block mb-1">(d) Deflection in beams/slabs/floors (Upload Images)</label>
+                                                            <input
+                                                                type="file"
+                                                                className="w-[50%] border rounded p-2"
+                                                                multiple
+                                                                onChange={(e) => handleImageChange("defect_deflectionBeamsSlabsFloors", e.target.files)}
+                                                            />
+                                                            <div className="flex flex-wrap mt-2">
+                                                                {formData.defect_deflectionBeamsSlabsFloors?.map((img, index) => (
+                                                                    <div key={index} className="relative w-24 h-24 m-1">
+                                                                        <img src={img} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                                                                        <button
+                                                                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2"
+                                                                            onClick={() => removeImage("defect_deflectionBeamsSlabsFloors", index)}
+                                                                        >
+                                                                            X
+                                                                        </button>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
 
                                                         {/* State of Existing Repairs Section */}
                                                         <tr>
@@ -781,25 +894,57 @@ export default function AllForm() {
                                                         {[
                                                             { key: "defect_delaminationDebonding", label: "(a) Delamination/debonding" },
                                                             { key: "defect_crackingOthers", label: "(b) Cracking Others (specify)" },
-                                                        ].map((item) => (
-                                                            <tr key={item.key}>
-                                                                <td className="border p-2">{item.label}</td>
-                                                                <td className="border p-2">
-                                                                    <select
-                                                                        value={formData[item.key] || ""}
-                                                                        onChange={(e) =>
-                                                                            setFormData((prev) => ({ ...prev, [item.key]: e.target.value }))
-                                                                        }
-                                                                        className="w-full border rounded p-1"
-                                                                    >
-                                                                        <option value="">Select severity</option>
-                                                                        {["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"].map((level) => (
-                                                                            <option key={level} value={level}>{level}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
+                                                        ].map((item) => {
+                                                            const severityLevels = ["Insignificant", "Slight", "Moderate", "Severe", "Very Severe"];
+                                                            const colors = ["bg-green-500", "bg-yellow-400", "bg-orange-500", "bg-purple-600", "bg-red-500"];
+
+                                                            const valueIndex = severityLevels.indexOf(formData[item.key]) ?? 0;
+                                                            const color = colors[valueIndex];
+
+                                                            return (
+                                                                <tr key={item.key} className="border-b hover:bg-gray-100 transition-all">
+                                                                    <td className="border p-4">{item.label}</td>
+                                                                    <td className="border p-4">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <div className="relative w-full">
+                                                                                <input
+                                                                                    type="range"
+                                                                                    min="0"
+                                                                                    max="4"
+                                                                                    step="1"
+                                                                                    value={valueIndex}
+                                                                                    onChange={(e) =>
+                                                                                        setFormData((prev) => ({
+                                                                                            ...prev,
+                                                                                            [item.key]: severityLevels[e.target.value]
+                                                                                        }))
+                                                                                    }
+                                                                                    className="w-full appearance-none bg-transparent cursor-pointer z-10 relative"
+                                                                                    style={{
+                                                                                        outline: "none",
+                                                                                        WebkitAppearance: "none",
+                                                                                    }}
+                                                                                />
+                                                                                {/* Colored Track */}
+                                                                                <div
+                                                                                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-300 ${color}`}
+                                                                                    style={{
+                                                                                        width: `${(valueIndex / 4) * 100}%`,
+                                                                                    }}
+                                                                                ></div>
+                                                                            </div>
+                                                                            {/* Display Selected Value */}
+                                                                            <span
+                                                                                className={`text-sm font-medium text-white px-3 py-1 rounded transition-all duration-300 ${color}`}
+                                                                            >
+                                                                                {severityLevels[valueIndex]}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        }
+                                                        )}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -1110,18 +1255,33 @@ export default function AllForm() {
 
                                         <div className="mt-6">
                                             <p className="font-semibold text-sm text-gray-700 mb-2">Deflection in Beams/Slabs/Floors</p>
-                                            <div className="grid   grid-cols-4 gap-2 mt-2">
-                                                {formData?.defect_deflectionBeamsSlabsFloors &&
-                                                    formData.defect_deflectionBeamsSlabsFloors
-                                                        .replace(/[{}]/g, '')
-                                                        .split(',')
-                                                        .map((url, index) => (
-                                                            <div key={`deflection-${index}`} className="border border-gray-300 rounded p-2">
-                                                                <img src={url.replace(/"/g, '').trim()} alt="Deflection Issue" className="w-full h-24 object-cover rounded" />
-                                                                <p className="mt-1 text-xs text-center text-gray-600">Photo {index + 1}</p>
-                                                            </div>
-                                                        ))
-                                                }
+                                            <div className="grid grid-cols-4 gap-2 mt-2">
+                                                {Array.isArray(formData?.defect_deflectionBeamsSlabsFloors)
+                                                    ? formData.defect_deflectionBeamsSlabsFloors.map((url, index) => (
+                                                        <div key={`deflection-${index}`} className="border border-gray-300 rounded p-2">
+                                                            <img
+                                                                src={(url?.url || url)?.replace(/"/g, '').trim()}
+                                                                alt="Deflection Issue"
+                                                                className="w-full h-24 object-cover rounded"
+                                                            />
+                                                            <p className="mt-1 text-xs text-center text-gray-600">Photo {index + 1}</p>
+                                                        </div>
+                                                    ))
+                                                    : typeof formData?.defect_deflectionBeamsSlabsFloors === 'string'
+                                                        ? formData.defect_deflectionBeamsSlabsFloors
+                                                            .replace(/[{}]/g, '')
+                                                            .split(',')
+                                                            .map((url, index) => (
+                                                                <div key={`deflection-${index}`} className="border border-gray-300 rounded p-2">
+                                                                    <img
+                                                                        src={url.replace(/"/g, '').trim()}
+                                                                        alt="Deflection Issue"
+                                                                        className="w-full h-24 object-cover rounded"
+                                                                    />
+                                                                    <p className="mt-1 text-xs text-center text-gray-600">Photo {index + 1}</p>
+                                                                </div>
+                                                            ))
+                                                        : null}
                                             </div>
                                         </div>
                                     </div>
